@@ -320,9 +320,9 @@
 
           <div class="photo-cards">
 
-            <a class="photo-card" href="/india/">
+            <a class="photo-card" href="india/">
               <div class="photo-card-image-wrap">
-                <img class="photo-card-image" src="/pooram/assets/where-it-all-began.webp" alt="India · 2025" loading="lazy" />
+                <img class="photo-card-image" src="pooram/assets/where-it-all-began.webp" alt="India · 2025" loading="lazy" />
               </div>
               <div class="photo-card-meta">
                 <span class="photo-card-kicker">A Year on the Road</span>
@@ -332,9 +332,9 @@
               </div>
             </a>
 
-            <a class="photo-card" href="/pooram/">
+            <a class="photo-card" href="pooram/">
               <div class="photo-card-image-wrap">
-                <img class="photo-card-image" src="/pooram/images/DSC00486-no%20grain.jpg" alt="Thrissur Pooram" loading="lazy" />
+                <img class="photo-card-image" src="pooram/images/DSC00486-no%20grain.jpg" alt="Thrissur Pooram" loading="lazy" />
               </div>
               <div class="photo-card-meta">
                 <span class="photo-card-kicker">A Photo Essay · May 2025</span>
@@ -362,12 +362,23 @@
   }
 
   tabs.forEach(tab => {
-    tab.addEventListener("click", () => activate(tab.dataset.tab));
+    tab.addEventListener("click", () => {
+      const name = tab.dataset.tab;
+      activate(name);
+      const newUrl = name === "work" ? location.pathname : `${location.pathname}#${name}`;
+      history.pushState({ tab: name }, "", newUrl);
+    });
   });
 
   // Deep-link via hash (#photo or #work)
   const hash = window.location.hash.replace("#", "");
   if (hash === "photo" || hash === "work") activate(hash);
+
+  // Back/forward navigation
+  window.addEventListener("popstate", () => {
+    const h = window.location.hash.replace("#", "");
+    activate(h === "photo" ? "photo" : "work");
+  });
 </script>
 
 </body>
