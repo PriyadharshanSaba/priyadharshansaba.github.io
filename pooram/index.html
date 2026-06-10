@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thrissur Pooram — Photographs by Priyadharshan</title>
+  <meta name="description" content="A photo essay on Thrissur Pooram, Kerala — May 2025. Photographs by Priyadharshan S." />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Thrissur Pooram — Photographs by Priyadharshan" />
+  <meta property="og:description" content="A photo essay on Kerala's grandest festival. May 2025." />
+  <meta property="og:image" content="https://priyadharshansaba.github.io/pooram/images/og-preview.jpg" />
+  <meta property="og:image:secure_url" content="https://priyadharshansaba.github.io/pooram/images/og-preview.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1400" />
+  <meta property="og:image:height" content="933" />
+  <meta property="og:image:alt" content="Thrissur Pooram — opening frame" />
+  <meta property="og:url" content="https://priyadharshansaba.github.io/pooram/" />
+  <meta property="og:site_name" content="Photographs by Priyadharshan" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Thrissur Pooram — Photographs by Priyadharshan" />
+  <meta name="twitter:description" content="A photo essay on Kerala's grandest festival. May 2025." />
+  <meta name="twitter:image" content="https://priyadharshansaba.github.io/pooram/images/og-preview.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&family=Noto+Serif+Malayalam:wght@500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #f5f2ec;
+      --ink: #1a1a1a;
+      --muted: #6b6b6b;
+      --rule: #d9d4ca;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --mal: 'Noto Serif Malayalam', 'Malayalam Sangam MN', serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--serif);
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    img { display: block; max-width: 100%; }
+
+    /* ---------- HERO ---------- */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background: #000;
+    }
+    .hero img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.78);
+    }
+    .hero-content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 0 1.5rem 6vh;
+      text-align: center;
+      color: #f4efe7;
+    }
+    .hero-kicker {
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      margin: 0 0 1.2rem;
+      opacity: 0.85;
+    }
+    .hero-title-mal {
+      font-family: var(--mal);
+      font-weight: 700;
+      font-size: clamp(3rem, 9vw, 7rem);
+      line-height: 1;
+      margin: 0;
+      letter-spacing: 0.01em;
+    }
+    .hero-title-en {
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 0.72rem;
+      margin: 0.5rem 0 0;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+    .hero-meta {
+      position: absolute;
+      bottom: 2rem;
+      left: 2rem;
+      right: 2rem;
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #f4efe7;
+      opacity: 0.75;
+    }
+
+    /* ---------- INTRO / OPENING ESSAY ---------- */
+    .opening {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+      background: var(--bg);
+    }
+    .opening-text {
+      padding: clamp(3rem, 8vw, 7rem) clamp(2rem, 5vw, 5rem);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .essay-label {
+      font-family: var(--sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+    .essay-title {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      line-height: 1.15;
+      margin: 0 0 2rem;
+      letter-spacing: -0.005em;
+    }
+    .essay-body p {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      line-height: 1.65;
+      color: #2a2a2a;
+      margin: 0 0 1.2rem;
+    }
+    .essay-body p:first-child::first-letter {
+      font-family: var(--serif);
+      font-size: 3.6rem;
+      font-weight: 500;
+      float: left;
+      line-height: 0.9;
+      padding: 0.25rem 0.6rem 0 0;
+      color: var(--ink);
+    }
+    .opening-image {
+      position: relative;
+      overflow: hidden;
+      background: #111;
+    }
+    .opening-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* ---------- PLATE (single image) ---------- */
+    .plate {
+      padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 5vw, 5rem);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .plate-frame {
+      width: 100%;
+      max-width: 1200px;
+    }
+    .plate-frame img {
+      width: 100%;
+      height: auto;
+      max-height: 85vh;
+      object-fit: contain;
+      margin: 0 auto;
+    }
+    .caption {
+      max-width: 560px;
+      margin: 2rem auto 0;
+      text-align: center;
+      font-family: var(--serif);
+      font-style: normal;
+      font-size: 1.05rem;
+      line-height: 1.5;
+      color: #333;
+    }
+    .caption em { font-style: normal; }
+    .caption .caption-num {
+      display: block;
+      font-family: var(--sans);
+      font-style: normal;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.9rem;
+    }
+
+    /* full-bleed variant for dramatic frames */
+    .plate.bleed {
+      padding: 0;
+    }
+    .plate.bleed .plate-frame {
+      max-width: 100%;
+    }
+    .plate.bleed .plate-frame img {
+      width: 100%;
+      height: 100vh;
+      max-height: none;
+      object-fit: cover;
+    }
+    .plate.bleed .caption {
+      padding: 2rem 1.5rem 5rem;
+      margin-top: 0;
+    }
+
+    /* ---------- DIPTYCH ---------- */
+    .diptych {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 3vw, 3rem);
+    }
+    .diptych img {
+      width: 100%;
+      height: 80vh;
+      object-fit: cover;
+    }
+    .diptych + .caption {
+      margin: 1rem auto 5rem;
+    }
+
+    /* ---------- CHAPTER MARK ---------- */
+    .chapter {
+      text-align: center;
+      padding: 6rem 1.5rem 3rem;
+    }
+    .chapter-num {
+      font-family: var(--sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.2rem;
+    }
+    .chapter-title {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      margin: 0;
+      letter-spacing: -0.005em;
+    }
+    .chapter-rule {
+      width: 60px;
+      height: 1px;
+      background: var(--ink);
+      margin: 1.8rem auto 0;
+      opacity: 0.5;
+    }
+
+    /* ---------- COLOPHON / FOOTER ---------- */
+    .colophon {
+      border-top: 1px solid var(--rule);
+      margin-top: 6rem;
+      padding: 4rem 2rem 5rem;
+      text-align: center;
+    }
+    .colophon-mark {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1.4rem;
+      margin: 0 0 0.4rem;
+    }
+    .colophon-name {
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin: 0 0 0.6rem;
+    }
+    .colophon-meta {
+      font-family: var(--sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 800px) {
+      /* Every image shows in full — no crop, no zoom. */
+      .opening { grid-template-columns: 1fr; }
+      .opening-image { min-height: auto; order: 1; background: var(--bg); }
+      .opening-image img { width: 100%; height: auto; object-fit: contain; }
+      .opening-text { padding: 4rem 1.5rem; order: 2; }
+
+      .diptych { grid-template-columns: 1fr; gap: 0.4rem; padding: 2rem 1rem; }
+      .diptych img { height: auto; object-fit: contain; }
+
+      .plate { padding: 3rem 1rem; }
+      .plate-frame img { max-height: none; height: auto; object-fit: contain; }
+      .plate.bleed { padding: 3rem 1rem; }
+      .plate.bleed .plate-frame img { height: auto; max-height: none; object-fit: contain; }
+      .plate.bleed .caption { padding: 1.5rem 0 0; }
+
+      /* Hero: full image visible, title sits beneath in black band */
+      .hero { height: auto; min-height: 100vh; display: flex; flex-direction: column; }
+      .hero img { position: relative; inset: auto; width: 100%; height: auto; object-fit: contain; filter: none; }
+      .hero-content { position: relative; inset: auto; padding: 3rem 1.5rem 1.5rem; flex: 1; justify-content: center; }
+      .hero-meta { position: relative; bottom: auto; left: auto; right: auto; padding: 0 1.5rem 2rem; font-size: 0.55rem; letter-spacing: 0.2em; }
+
+      .essay-body p { font-size: 1.05rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <img src="images/DSC00173-2.jpg" alt="Thrissur Pooram opening" loading="eager" />
+    <div class="hero-content">
+      <p class="hero-kicker">A Photo Essay · Kerala · May 2025</p>
+      <h1 class="hero-title-mal">തൃശ്ശൂര്‍ പൂരം</h1>
+      <p class="hero-title-en">Thrissur Pooram</p>
+    </div>
+    <div class="hero-meta">
+      <span>Priyadharshan</span>
+      <span>I / VIII</span>
+    </div>
+  </section>
+
+  <!-- OPENING ESSAY -->
+  <section class="opening">
+    <div class="opening-text">
+      <p class="essay-label">Where it began</p>
+      <h2 class="essay-title">A festival born from exclusion, raised into legend.</h2>
+      <div class="essay-body">
+        <p>In 1798, when the smaller temples of Thrissur were turned away from the Arattupuzha Pooram, the ruler Sakthan Thampuran answered with a festival of his own. Ten temples, one ground, one night — a deliberate act of unification dressed as a celebration.</p>
+        <p>Two and a quarter centuries on, the bargain still holds. The elephants still walk in, the drums still rise, and the city still empties itself onto the Thekkinkadu Maidan to watch the gods meet under parasols of silk.</p>
+        <p>These photographs were made over the long day and longer night of Pooram, May 2025 — a slow accounting of a fast festival.</p>
+      </div>
+    </div>
+    <div class="opening-image">
+      <img src="images/DSC00182.jpg" alt="A devotee at Thrissur Pooram" loading="lazy" />
+    </div>
+  </section>
+
+  <!-- CHAPTER I -->
+  <div class="chapter">
+    <p class="chapter-num">I — The Approach</p>
+    <h3 class="chapter-title">Before the gods arrive, the city makes itself ready.</h3>
+    <div class="chapter-rule"></div>
+  </div>
+
+  <section class="plate">
+    <div class="plate-frame">
+      <img src="images/DSC00191.jpg" alt="" loading="lazy" />
+    </div>
+    <p class="caption">
+      <span class="caption-num">Plate 01</span>
+      The hours before the procession belong to the waiting — to vendors, to children, to the heat lifting off the maidan.
+    </p>
+  </section>
+
+  <section class="plate">
+    <div class="plate-frame">
+      <img src="images/DSC00201.jpg" alt="" loading="lazy" />
+    </div>
+  </section>
+
+  <!-- CHAPTER II -->
+  <div class="chapter">
+    <p class="chapter-num">II — The Elephants</p>
+    <h3 class="chapter-title">Caparisoned in gold, fifteen tuskers walk into legend.</h3>
+    <div class="chapter-rule"></div>
+  </div>
+
+  <section class="plate bleed">
+    <div class="plate-frame">
+      <img src="images/DSC00239.jpg" alt="" loading="lazy" />
+    </div>
+    <p class="caption">
+      <span class="caption-num">Plate 02</span>
+      The <em>nettipattam</em> — a forehead ornament beaten from sheet gold — was once a gift to temple deities. Today it rides into the maidan on the brow of an elephant.
+    </p>
+  </section>
+
+  <section class="plate">
+    <div class="plate-frame">
+      <img src="images/DSC00419-3.jpg" alt="" loading="lazy" />
+    </div>
+  </section>
+
+  <!-- CHAPTER III -->
+  <div class="chapter">
+    <p class="chapter-num">III — Faces in the Crowd</p>
+    <h3 class="chapter-title">The festival is for the gods. It is also, always, for the watching.</h3>
+    <div class="chapter-rule"></div>
+  </div>
+
+  <section class="diptych">
+    <img src="images/DSC00278.jpg" alt="" loading="lazy" />
+    <img src="images/DSC00218.jpg" alt="" loading="lazy" />
+  </section>
+  <p class="caption">
+    <span class="caption-num">Plates 03 — 04</span>
+    Two and a half lakh come every year. Sakthan Thampuran's quiet act of inclusion is now the largest gathering Kerala holds.
+  </p>
+
+  <!-- CHAPTER IV -->
+  <div class="chapter">
+    <p class="chapter-num">IV — The Melam</p>
+    <h3 class="chapter-title">The drums do not accompany the festival. They <em>are</em> the festival.</h3>
+    <div class="chapter-rule"></div>
+  </div>
+
+  <section class="plate">
+    <div class="plate-frame">
+      <img src="images/DSC00509.jpg" alt="" loading="lazy" />
+    </div>
+    <p class="caption">
+      <span class="caption-num">Plate 05</span>
+      <em>Pandi melam</em> — over two hundred percussionists locked into a single climbing tempo. The piece lasts nearly four hours and ends in a frenzy the crowd has been waiting all afternoon to meet.
+    </p>
+  </section>
+
+  <section class="plate bleed">
+    <div class="plate-frame">
+      <img src="images/IMG_1251.jpg" alt="" loading="lazy" />
+    </div>
+  </section>
+
+  <!-- CHAPTER V -->
+  <div class="chapter">
+    <p class="chapter-num">V — Kudamattam</p>
+    <h3 class="chapter-title">The umbrellas change, and the rival temples speak.</h3>
+    <div class="chapter-rule"></div>
+  </div>
+
+  <section class="plate bleed">
+    <div class="plate-frame">
+      <img src="images/DSC00486-no grain.jpg" alt="" loading="lazy" />
+    </div>
+    <p class="caption">
+      <span class="caption-num">Plate 06</span>
+      <em>Kudamattam</em> — the ceremonial exchange of silk parasols above the elephants. A wordless conversation between Paramekkavu and Thiruvambadi, played out colour by colour.
+    </p>
+  </section>
+
+  <section class="diptych">
+    <img src="images/IMG_1182.jpg" alt="" loading="lazy" />
+    <img src="images/DSC00610.jpg" alt="" loading="lazy" />
+  </section>
+
+  <!-- CHAPTER VI -->
+  <div class="chapter">
+    <p class="chapter-num">VI — Vedikettu</p>
+    <h3 class="chapter-title">By the small hours, the sky is the festival.</h3>
+    <div class="chapter-rule"></div>
+  </div>
+
+  <section class="plate bleed">
+    <div class="plate-frame">
+      <img src="images/DSC00589.jpg" alt="" loading="lazy" />
+    </div>
+    <p class="caption">
+      <span class="caption-num">Plate 07</span>
+      The fireworks begin near three in the morning and do not stop for an hour. The maidan tilts its face up. The drums, for once, are quiet.
+    </p>
+  </section>
+
+  <section class="plate">
+    <div class="plate-frame">
+      <img src="images/DSC00300-2.jpg" alt="" loading="lazy" />
+    </div>
+    <p class="caption">
+      <span class="caption-num">Plate 08 — The Mahout</span>
+      Before the gold, before the drums, before the crowd — there is the <em>paappaan</em>. Long before sunrise he bathes the elephant in the river, oils its trunk, walks it the last miles to the maidan. Through the heat, through the four-hour melam, through the fireworks that would scatter any other animal, his hand stays on the shoulder. The festival belongs to the gods. The elephant belongs to him.
+    </p>
+  </section>
+
+  <!-- COLOPHON -->
+  <footer class="colophon">
+    <p class="colophon-mark">— fin —</p>
+    <p class="colophon-name">Priyadharshan S</p>
+    <p class="colophon-meta">Thrissur, Kerala · May 2025 · @priyadharshanS</p>
+  </footer>
+
+</body>
+</html>
