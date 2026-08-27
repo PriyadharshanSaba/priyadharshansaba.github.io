@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Edge of Us — Animals, Boundaries & Belonging</title>
+<meta name="description" content="A photographic study of animals moving through the spaces humans make, worship, share, fence, protect and leave behind.">
+<meta name="author" content="Priyadharshan S.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e1110;
+  --paper:#e8e4db;
+  --ink:#e9e5dc;
+  --muted:#9b9b92;
+  --rule:#2b2e2b;
+  --forest:#17201b;
+  --serif:'DM Serif Display', Georgia, serif;
+  --sans:'Inter', Arial, sans-serif;
+  --mono:'DM Mono', monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--serif);font-weight:400;
+  -webkit-font-smoothing:antialiased;
+}
+img{display:block;width:100%;max-width:100%;height:auto}
+a{color:inherit}
+.nav{
+  position:fixed;z-index:10;top:0;left:0;right:0;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1rem 1.5rem;
+  font:400 .65rem/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;
+  color:#ddd9d0;background:linear-gradient(to bottom,rgba(0,0,0,.72),transparent);
+  pointer-events:none;
+}
+.nav a{pointer-events:auto;text-decoration:none;opacity:.8}
+.hero{
+  min-height:100svh;position:relative;display:grid;grid-template-rows:1fr auto;
+  background:#070807;overflow:hidden;
+}
+.hero-image{height:100%;position:absolute;inset:0}
+.hero-image img{height:100%;object-fit:cover;object-position:center center;filter:saturate(.88) contrast(1.05)}
+.hero-scrim{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.82),rgba(0,0,0,.08) 62%,rgba(0,0,0,.2))}
+.hero-content{position:relative;z-index:1;align-self:end;padding:9rem 7vw 2.5rem;max-width:1100px}
+.kicker,.chapter-num,.place,.caption-num,.meta{
+  font-family:var(--mono);font-size:.65rem;line-height:1.5;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--muted)
+}
+.kicker{color:#d5d2c9;margin:0 0 1rem}
+h1{font:400 clamp(3.7rem,9vw,8.5rem)/.9 var(--serif);margin:0;letter-spacing:-.03em;max-width:900px}
+.deck{
+  margin:1.5rem 0 0;max-width:650px;
+  font:300 1rem/1.7 var(--sans);color:#d8d4cb
+}
+.hero-meta{
+  position:relative;z-index:1;display:flex;justify-content:space-between;
+  padding:0 2.5rem 1.5rem;font:400 .62rem/1 var(--mono);
+  letter-spacing:.2em;text-transform:uppercase;color:#a8a79f
+}
+.intro{
+  background:var(--paper);color:#151817;
+  display:grid;grid-template-columns:1fr 1fr;min-height:90svh
+}
+.intro-text{padding:clamp(4rem,9vw,8rem) clamp(2rem,7vw,7rem);display:flex;flex-direction:column;justify-content:center}
+.intro-text .kicker{color:#6c706b;margin-bottom:1.5rem}
+.intro h2{font:400 clamp(2rem,4vw,3.2rem)/1.08 var(--serif);margin:0 0 2rem;max-width:650px}
+.intro p{font:400 1.08rem/1.7 var(--serif);max-width:600px;margin:0 0 1.1rem;color:#2e322f}
+.intro-image{background:#0b0d0c;display:flex;align-items:center;overflow:hidden}
+.intro-image img{height:100%;object-fit:cover;object-position:center}
+.chapter{padding:8rem 1.5rem 4rem;text-align:center;background:var(--bg)}
+.chapter-title{font:italic 400 clamp(2rem,4vw,3.3rem)/1.06 var(--serif);max-width:850px;margin:.9rem auto 0}
+.place{margin:1rem 0 0}
+.rule{width:55px;height:1px;background:#777c75;opacity:.55;margin:1.7rem auto 0}
+.plate{padding:1rem clamp(1rem,4vw,4rem) 5rem;max-width:1500px;margin:0 auto}
+.plate img{max-height:85vh;object-fit:contain}
+.caption{
+  max-width:740px;margin:1.6rem auto 0;
+  text-align:center;
+}
+.caption .caption-num{display:block;margin-bottom:.7rem;color:#858981}
+.diptych{
+  display:grid;grid-template-columns:1fr 1fr;gap:.6rem;
+  padding:1rem clamp(1rem,4vw,4rem) 2rem;max-width:1500px;margin:0 auto
+}
+.diptych img{height:72vh;object-fit:cover}
+.interlude{
+  min-height:55svh;background:var(--forest);
+  display:flex;align-items:center;justify-content:center;padding:5rem 2rem;text-align:center
+}
+.interlude p{max-width:800px;margin:0;font:italic 400 clamp(2rem,4vw,3.4rem)/1.15 var(--serif);color:#dedbd3}
+.end{
+  background:#070807;padding:8rem 2rem 6rem;text-align:center;
+  border-top:1px solid var(--rule)
+}
+.end h2{font:400 clamp(2.7rem,6vw,5.5rem)/.95 var(--serif);margin:0 auto 1.5rem;max-width:900px}
+.end p{max-width:680px;margin:0 auto;font:300 1rem/1.7 var(--sans);color:#aaa9a2}
+.colophon{margin-top:5rem;padding-top:1.6rem;border-top:1px solid var(--rule);font:400 .65rem/1.6 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:#73756f}
+@media(max-width:800px){
+  .intro{grid-template-columns:1fr}
+  .intro-image{min-height:70svh}
+  .intro-text{order:2}
+  .hero-content{padding:8rem 1.5rem 2rem}
+  .hero-meta{padding:0 1rem 1rem}
+  .diptych{grid-template-columns:1fr}
+  .diptych img{height:auto;max-height:none}
+  .plate{padding:1rem 1rem 4rem}
+  .caption{font-size:1rem}
+}
+
+/* =========================================
+   THE LINES WE KEEP
+   ========================================= */
+
+.chapter-confinement {
+  padding: 12rem 0 14rem;
+}
+
+
+/* ---------- INTRO ---------- */
+
+.chapter-confinement .chapter-intro {
+  width: min(620px, calc(100% - 40px));
+  margin: 0 auto 10rem;
+  text-align: center;
+}
+
+.chapter-confinement .chapter-label {
+  display: block;
+  margin-bottom: 1.5rem;
+
+  font-family: var(--sans);
+  font-size: 0.65rem;
+  font-weight: 400;
+
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+
+  color: var(--muted);
+}
+
+.chapter-confinement h2 {
+  margin: 0 0 3.5rem;
+
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 400;
+  line-height: 1.05;
+
+  color: var(--text);
+}
+
+.chapter-confinement .chapter-story {
+  max-width: 570px;
+  margin: 0 auto 1.4rem;
+
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.7;
+
+  color: var(--text-soft);
+}
+
+
+/* ---------- IMAGES ---------- */
+
+.confinement-image {
+  width: min(1100px, calc(100% - 40px));
+  margin: 0 auto 11rem;
+}
+
+.confinement-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+
+  filter: grayscale(100%);
+}
+
+
+/* ---------- CAPTIONS ---------- */
+
+.confinement-image figcaption {
+  width: min(560px, 100%);
+  margin: 2rem auto 0;
+
+  text-align: center;
+}
+
+.confinement-image .image-location {
+  display: block;
+  margin-bottom: 0.85rem;
+
+  font-family: var(--sans);
+  font-size: 0.62rem;
+  font-weight: 400;
+
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+
+  color: var(--muted);
+}
+
+.confinement-image .image-caption {
+  display: block;
+
+  font-family: var(--serif);
+  font-size: 1.02rem;
+  font-weight: 400;
+  line-height: 1.6;
+
+  color: var(--text-soft);
+}
+
+
+/* ---------- FINAL IMAGE ---------- */
+
+.confinement-final {
+  margin-bottom: 0;
+}
+
+.confinement-final img {
+  width: min(850px, 100%);
+  margin: 0 auto;
+}
+
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width: 700px) {
+
+  .chapter-confinement {
+    padding: 8rem 0 9rem;
+  }
+
+  .chapter-confinement .chapter-intro {
+    margin-bottom: 6rem;
+  }
+
+  .chapter-confinement h2 {
+    margin-bottom: 2.5rem;
+  }
+
+  .chapter-confinement .chapter-story {
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .confinement-image {
+    width: calc(100% - 24px);
+    margin-bottom: 7rem;
+  }
+
+  .confinement-image figcaption {
+    margin-top: 1.5rem;
+  }
+
+  .confinement-image .image-caption {
+    font-size: 0.98rem;
+  }
+}
+</style>
+</head>
+<body>
+<div class="nav"><a href="#start">THE EDGE OF US</a><a href="#end">2025–26 / FIELD STUDY</a></div>
+
+<header class="hero" id="start">
+  <div class="hero-image"><img src="assets/bear-shrine.webp" alt="A sloth bear beside a small shrine"></div>
+  <div class="hero-scrim"></div>
+  <div class="hero-content">
+    <p class="kicker">A Photographic Study · India · 2025–26</p>
+    <h1>The Edge<br>of Us</h1>
+    <p class="deck">Animals moving through the spaces we make, share, alter and call our own.</p>
+  </div>
+  <div class="hero-meta"><span>Priyadharshan S.</span><span>Field notes · 2025–26</span></div>
+</header>
+
+<section class="intro">
+  <div class="intro-text">
+    <p class="kicker">Foreword</p>
+    <h2>We draw the boundary. The animal lives with what remains.</h2>
+    <p>India is full of borders that look permanent from a human distance: shrine and forest, road and grassland, temple and street, enclosure and open ground.</p>
+    <p>Animals cross them differently. Some are invited in. Some are tolerated. Some are fenced out. Some simply pass through, as if the line was never there.</p>
+    <p>This is an ongoing photographic study of those overlaps — not wildlife apart from people, but animals living within landscapes we have marked, altered, occupied and shared.</p>
+  </div>
+  <div class="intro-image"><img src="assets/tigers-road.webp" alt="Two tigers crossing a dirt road"></div>
+</section>
+
+<section class="chapter">
+  <p class="chapter-num">I — The Shrine</p>
+  <h2 class="chapter-title">When the wild enters a sacred place, the boundary becomes a question.</h2>
+  <p class="place">Nilgiris · forest shrine</p>
+  <div class="rule"></div>
+</section>
+
+<section class="plate">
+  <img src="assets/bear-shrine.webp" alt="Sloth bear seated beside a shrine with a trident">
+  <p class="caption"><span class="caption-num">Plate 01 · Bear at the Shrine</span>
+  In The Nilgiris of southern India, ancient wildlife paths intersect with places of human devotion. This wild sloth bear (<em>Melursus ursinus</em>) paused beside a small forest shrine worshipped daily by local tribal communities — a space where people and wildlife live through the shared wilderness. Sloth bears here are known to investigate temples for the scent of ghee used to fuel ritual diyas. As development pushes further into biodiverse landscapes, encounters like this reveal the delicate balance between culture and nature — and the hopeful possibility of coexistence.</p>
+</section>
+
+<section class="chapter">
+  <p class="chapter-num">II — The Shared Landscape</p>
+  <h2 class="chapter-title">Sometimes the human presence is only a trace.</h2>
+  <p class="place">India · altered habitat</p>
+  <div class="rule"></div>
+</section>
+
+<div class="diptych">
+  <img src="assets/blue-bird.webp" alt="Blue bird perched on a cut tree stump">
+  <img src="assets/lizard-temple.webp" alt="Lizard perched in a lawn with a temple in the background">
+</div>
+<p class="caption" style="max-width:740px;margin:0 auto 5rem;padding:0 1rem;"><span class="caption-num">Plates 02–03 · Traces</span>
+A cut tree. A temple lawn. Neither image shows a confrontation. The boundary appears instead in the landscape itself — in what has been cleared, built, maintained, or left for an animal to occupy.</p>
+
+<section class="chapter">
+  <p class="chapter-num">III — Outside the Map</p>
+  <h2 class="chapter-title">Wildness is not always distant. Sometimes it is simply on the other side of the grass.</h2>
+  <p class="place">Nilgiris · open country</p>
+  <div class="rule"></div>
+</section>
+
+<section class="plate">
+  <img src="assets/gaur-hills-bw.webp" alt="A gaur standing on a grass-covered hillside">
+  <p class="caption"><span class="caption-num">Plate 04 · The Watcher</span>
+  A gaur stands above the photographer, framed by grass, sky and the thin human idea of a safe distance. There is no fence here. Only space, attention and the animal's decision to remain.</p>
+</section>
+
+<section class="chapter">
+  <p class="chapter-num">IV — Shared Shelter</p>
+  <h2 class="chapter-title">Some animals do not leave the human world. They make a life inside it.</h2>
+  <p class="place">Varanasi · riverfront</p>
+  <div class="rule"></div>
+</section>
+
+<section class="plate">
+  <img src="assets/priest-dog.webp" alt="A sleeping priest beside a sleeping stray dog">
+  <p class="caption"><span class="caption-num">Plate 05 · The Same Patch of Shade</span>
+  A priest and a stray pup asleep beside one another. Neither is performing a relationship. The photograph is interesting precisely because the boundary has temporarily disappeared.</p>
+</section>
+
+<section class="chapter">
+  <p class="chapter-num">V — The Street</p>
+  <h2 class="chapter-title">A road is a human line. The horse shares it without belonging entirely to either side.</h2>
+  <p class="place">Karnataka · residential street</p>
+  <div class="rule"></div>
+</section>
+
+<section class="plate">
+  <img src="assets/horse-street.webp" alt="A saddled horse walking beside a handler on a residential street">
+  <p class="caption"><span class="caption-num">Plate 06 · A Road Shared</span>
+  Dirt shoulder, asphalt, pedestrians, horse and handler — several ways of occupying the same narrow strip of ground. The boundary is negotiated rather than marked.</p>
+</section>
+
+<section class="chapter">
+  <p class="chapter-num">VI — Animals We Keep</p>
+  <h2 class="chapter-title">A domesticated animal still carries another history in its body.</h2>
+  <p class="place">Vrindavan · shelter / enclosure</p>
+  <div class="rule"></div>
+</section>
+
+<section class="plate">
+  <img src="assets/cows-shelter-bw.webp" alt="A group of cattle in a covered shelter">
+  <p class="caption"><span class="caption-num">Plate 07 · The Herd</span>
+  In Vrindavan, cows are sheltered in the name of Krishna. Food arrives, shade holds through the afternoon, and the days settle into a familiar rhythm. Whether this is care or confinement depends on where you stand. For the cow, perhaps it is neither — only a place to stand while the world passes.</p>
+</section>
+
+<section class="chapter">
+  <p class="chapter-num">VII — The Temple Animal</p>
+  <h2 class="chapter-title">When an animal becomes part of ritual, where does the creature end and the symbol begin?</h2>
+  <p class="place">Kerala · temple precinct</p>
+  <div class="rule"></div>
+</section>
+
+<section class="plate">
+  <img src="assets/temple-elephant.webp" alt="Decorated temple elephant surrounded by people">
+  <p class="caption"><span class="caption-num">Plate 08 · Elephant in the Temple</span>
+  Here the animal does not merely occupy human space. It occupies human meaning — watched, decorated, handled, and made central to the ceremony.</p>
+</section>
+
+<section class="chapter">
+  <p class="chapter-num">VIII — The Protected Forest</p>
+  <h2 class="chapter-title">Even inside a reserved forest, the human line is still there.</h2>
+  <p class="place">Southern India · safari road</p>
+  <div class="rule"></div>
+</section>
+
+<div class="diptych">
+  <img src="assets/tigers-road.webp" alt="Two tigers crossing a forest safari road">
+  <img src="assets/langurs.webp" alt="A family of langurs in a tree">
+</div>
+<p class="caption" style="max-width:740px;margin:0 auto 5rem;padding:0 1rem;"><span class="caption-num">Plates 09–10 · Within the Reserve</span>
+The road here is not a city road cutting into an unknown forest. It is a managed line inside protected habitat — built for human access, yet still crossed on the animal's terms. Nearby, the langurs occupy the trees above it, indifferent to the distinction.</p>
+
+<section class="chapter">
+  <p class="chapter-num">IX — In Flight</p>
+  <h2 class="chapter-title">Some boundaries are crossed so quickly they barely become visible.</h2>
+  <p class="place">India · open air</p>
+  <div class="rule"></div>
+</section>
+
+<section class="plate">
+  <img src="assets/bird-flight.webp" alt="A swallow in flight above a branch">
+  <p class="caption"><span class="caption-num">Plate 11 · Passing Through</span>
+  At the edge of an unfinished bridge, a bird settles on a piece of steel left behind. Human construction ends where its attention begins.</p>
+</section>
+
+<!-- =========================================
+     THE LINES WE KEEP
+     ========================================= -->
+
+<section class="chapter chapter-confinement">
+
+  <div class="chapter-intro">
+    <span class="chapter-label">IV</span>
+
+    <h2>The Lines We Keep</h2>
+
+    <p class="chapter-story">
+      We build fences around animals to keep them safe, to keep us safe,
+      and sometimes simply because we want to keep them close.
+    </p>
+
+    <p class="chapter-story">
+      Beyond the glass and concrete, their bodies remain wild in scale,
+      instinct and memory. But the world around them has been measured,
+      divided and made predictable.
+    </p>
+
+    <p class="chapter-story">
+      A fence is a simple thing. From one side, it is protection.
+      From the other, it is a limit.
+    </p>
+
+    <p class="chapter-story">
+      Perhaps the difficult part is not deciding whether these animals
+      are happy or sad. It is noticing how easily a boundary can turn
+      a living world into a space.
+    </p>
+  </div>
+
+
+  <!-- RHINOCEROS -->
+
+  <figure class="confinement-image">
+    <img
+      src="assets/DSC_0304.webp"
+      alt="Rhinoceros resting inside an enclosure"
+      loading="lazy"
+    >
+
+    <figcaption>
+      <span class="image-location">Zoo</span>
+      <span class="image-caption">
+        A large animal in a very small world.
+      </span>
+    </figcaption>
+  </figure>
+
+
+  <!-- CHIMPANZEES -->
+
+  <figure class="confinement-image">
+    <img
+      src="assets/DSC_0367.webp"
+      alt="Chimpanzees inside an enclosure"
+      loading="lazy"
+    >
+
+    <figcaption>
+      <span class="image-location">Zoo</span>
+      <span class="image-caption">
+        We watch them. They watch us.
+      </span>
+    </figcaption>
+  </figure>
+
+
+  <!-- LION -->
+
+  <figure class="confinement-image confinement-final">
+    <img
+      src="assets/DSC_0592.webp"
+      alt="Lion resting beside the boundary of its enclosure"
+      loading="lazy"
+    >
+
+    <figcaption>
+      <span class="image-location">Zoo</span>
+      <span class="image-caption">
+        A boundary made visible.
+      </span>
+    </figcaption>
+  </figure>
+
+</section>
+
+<section class="end" id="end">
+  <p class="kicker">Coda</p>
+  <h2>Where Our Worlds Meet</h2>
+  <p>The photographs are fragments of a larger question: how do animals live with the boundaries humans draw around them — and what do those overlaps reveal about the way we share a landscape?</p>
+  <div class="colophon">Priyadharshan S. · The Edge of Us · photographic study · India</div>
+</section>
+
+</body>
+</html>
