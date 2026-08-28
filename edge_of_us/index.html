@@ -9,6 +9,18 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<meta property="og:title" content="Where Our Worlds Meet">
+<meta property="og:description" content="A photographic exploration of the spaces where human and animal worlds overlap.">
+<meta property="og:image" content="https://priyadharshansaba.github.io/edge-of-us/assets/linkcover.webp">
+<meta property="og:url" content="https://priyadharshansaba.github.io/edge-of-us/">
+<meta property="og:type" content="website">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Edge of Us">
+<meta name="twitter:description" content="A photographic study of animals moving through the spaces humans make, share, alter and call their own.">
+<meta name="twitter:image" content="https://priyadharshansaba.github.io/edge-of-us/assets/linkcover.webp">
+
 <style>
 :root{
   --bg:#0e1110;
@@ -25,7 +37,7 @@
 html{scroll-behavior:smooth}
 body{
   margin:0;background:var(--bg);color:var(--ink);
-  font-family:var(--serif);font-weight:400;
+  /* font-family:var(--serif); */
   -webkit-font-smoothing:antialiased;
 }
 img{display:block;width:100%;max-width:100%;height:auto}
@@ -99,7 +111,7 @@ h1{font:400 clamp(3.7rem,9vw,8.5rem)/.9 var(--serif);margin:0;letter-spacing:-.0
 }
 .end h2{font:400 clamp(2.7rem,6vw,5.5rem)/.95 var(--serif);margin:0 auto 1.5rem;max-width:900px}
 .end p{max-width:680px;margin:0 auto;font:300 1rem/1.7 var(--sans);color:#aaa9a2}
-.colophon{margin-top:5rem;padding-top:1.6rem;border-top:1px solid var(--rule);font:400 .65rem/1.6 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:#73756f}
+.colophon{margin-top:5rem;padding-top:1.6rem;font:400 .65rem/1.6 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:#73756f}
 @media(max-width:800px){
   .intro{grid-template-columns:1fr}
   .intro-image{min-height:70svh}
@@ -109,7 +121,7 @@ h1{font:400 clamp(3.7rem,9vw,8.5rem)/.9 var(--serif);margin:0;letter-spacing:-.0
   .diptych{grid-template-columns:1fr}
   .diptych img{height:auto;max-height:none}
   .plate{padding:1rem 1rem 4rem}
-  .caption{font-size:1rem}
+  .caption{font-size:.52rem}
 }
 
 /* =========================================
@@ -135,7 +147,7 @@ h1{font:400 clamp(3.7rem,9vw,8.5rem)/.9 var(--serif);margin:0;letter-spacing:-.0
 
   font-family: var(--sans);
   font-size: 0.65rem;
-  font-weight: 400;
+  /* font-weight: 400; */
 
   letter-spacing: 0.3em;
   text-transform: uppercase;
@@ -169,12 +181,12 @@ h1{font:400 clamp(3.7rem,9vw,8.5rem)/.9 var(--serif);margin:0;letter-spacing:-.0
 
 /* ---------- IMAGES ---------- */
 
-.confinement-image {
+.chapter-confinement .confinement-image {
   width: min(1100px, calc(100% - 40px));
   margin: 0 auto 11rem;
 }
 
-.confinement-image img {
+.chapter-confinement .confinement-image img {
   display: block;
   width: 100%;
   height: auto;
@@ -185,7 +197,7 @@ h1{font:400 clamp(3.7rem,9vw,8.5rem)/.9 var(--serif);margin:0;letter-spacing:-.0
 
 /* ---------- CAPTIONS ---------- */
 
-.confinement-image img {
+.chapter-confinement .confinement-image img {
   display: block;
   width: auto;
   max-width: 100%;
@@ -196,14 +208,14 @@ h1{font:400 clamp(3.7rem,9vw,8.5rem)/.9 var(--serif);margin:0;letter-spacing:-.0
   filter: grayscale(100%);
 }
 
-.confinement-image figcaption {
+.chapter-confinement .confinement-image figcaption {
   width: min(560px, 100%);
   margin: 2rem auto 0;
 
   text-align: center;
 }
 
-.confinement-image .image-location {
+.chapter-confinement .confinement-image .image-location {
   display: block;
   margin-bottom: 0.85rem;
 
@@ -217,12 +229,12 @@ h1{font:400 clamp(3.7rem,9vw,8.5rem)/.9 var(--serif);margin:0;letter-spacing:-.0
   color: var(--muted);
 }
 
-.confinement-image .image-caption {
+.chapter-confinement .confinement-image .image-caption {
   display: block;
 
   font-family: var(--serif);
   font-size: 1.02rem;
-  font-weight: 400;
+  /* font-weight: 400; */
   line-height: 1.6;
 
   color: var(--text-soft);
@@ -263,33 +275,92 @@ h1{font:400 clamp(3.7rem,9vw,8.5rem)/.9 var(--serif);margin:0;letter-spacing:-.0
     line-height: 1.65;
   }
 
-  .confinement-image {
+  .chapter-confinement .confinement-image {
     width: calc(100% - 24px);
     margin-bottom: 7rem;
   }
 
-  .confinement-image figcaption {
+  .chapter-confinement .confinement-image figcaption {
     margin-top: 1.5rem;
   }
 
-  .confinement-image .image-caption {
+  .chapter-confinement .confinement-image .image-caption {
     font-size: 0.98rem;
   }
 }
+.coda-image{
+  width:min(760px,calc(100% - 40px));
+  margin:0 auto 7rem;
+  text-align:center;
+}
+.coda-image img{
+  display:block;
+  width:100%;
+  max-width:760px;
+  height:auto;
+  margin:0 auto;
+}
+.coda-image figcaption{
+  margin:1.5rem auto 0;
+}
+.coda-image .image-location{
+  display:block;
+  margin-bottom:.7rem;
+  font:400 .62rem/1.5 var(--mono);
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.coda-image .image-caption{
+  display:block;
+  font:400 1.02rem/1.6 var(--serif);
+  color:#aaa9a2;
+}
+
+/* ---------- SIMPLE CAPTIONS ---------- */
+
+.chapter-confinement figcaption,
+.chapter-confinement .image-caption {
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  /* font-weight: 300; */
+  line-height: 1.65;
+  letter-spacing: 0.01em;
+  color: var(--text-soft);
+}
+
+.chapter-confinement .image-location {
+  font-family: var(--sans);
+  font-size: 0.58rem;
+  /* font-weight: 400; */
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.plate-caption {
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  /* font-weight: 300; */
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+  color: #aaa;
+}
+
 </style>
 </head>
 <body>
-<div class="nav"><a href="#start">THE EDGE OF US</a><a href="#end">2025–26 / FIELD STUDY</a></div>
+<div class="nav"><a href="#start">THE EDGE OF US</a><a href="#end">FIELD STUDY</a></div>
 
 <header class="hero" id="start">
   <div class="hero-image"><img src="assets/bear-shrine.webp" alt="A sloth bear beside a small shrine"></div>
   <div class="hero-scrim"></div>
   <div class="hero-content">
-    <p class="kicker">A Photographic Study · India · 2025–26</p>
+    <p class="kicker">A Photographic Study · India</p>
     <h1>The Edge<br>of Us</h1>
     <p class="deck">Animals moving through the spaces we make, share, alter and call our own.</p>
   </div>
-  <div class="hero-meta"><span>Priyadharshan S.</span><span>Field notes · 2025–26</span></div>
+  <div class="hero-meta"><span>Priyadharshan S.</span><span>Field notes</span></div>
 </header>
 
 <section class="intro">
@@ -313,7 +384,8 @@ h1{font:400 clamp(3.7rem,9vw,8.5rem)/.9 var(--serif);margin:0;letter-spacing:-.0
 <section class="plate">
   <img src="assets/bear-shrine.webp" alt="Sloth bear seated beside a shrine with a trident">
   <p class="caption"><span class="caption-num">Plate 01 · Bear at the Shrine</span>
-  In The Nilgiris of southern India, ancient wildlife paths intersect with places of human devotion. This wild sloth bear (<em>Melursus ursinus</em>) paused beside a small forest shrine worshipped daily by local tribal communities — a space where people and wildlife live through the shared wilderness. Sloth bears here are known to investigate temples for the scent of ghee used to fuel ritual diyas. As development pushes further into biodiverse landscapes, encounters like this reveal the delicate balance between culture and nature — and the hopeful possibility of coexistence.</p>
+  <em>Sloth Bear - Melursus ursinus</em><br>
+  In The Nilgiris of southern India, ancient wildlife paths intersect with places of human devotion. This wild sloth bear paused beside a small forest shrine worshipped daily by local tribal communities — a space where people and wildlife live through the shared wilderness. Sloth bears here are known to investigate temples for the scent of ghee used to fuel ritual diyas. As development pushes further into biodiverse landscapes, encounters like this reveal the delicate balance between culture and nature — and the hopeful possibility of coexistence.</p>
 </section>
 
 <section class="chapter">
@@ -328,6 +400,7 @@ h1{font:400 clamp(3.7rem,9vw,8.5rem)/.9 var(--serif);margin:0;letter-spacing:-.0
   <img src="assets/lizard-temple.webp" alt="Lizard perched in a lawn with a temple in the background">
 </div>
 <p class="caption" style="max-width:740px;margin:0 auto 5rem;padding:0 1rem;"><span class="caption-num">Plates 02–03 · Traces</span>
+<em>Loten's Sunbird - Cinnyris lotenius , Indian Garden Lizard - Calotes versicolor </em><br>
 A cut tree. A temple lawn. Neither image shows a confrontation. The boundary appears instead in the landscape itself — in what has been cleared, built, maintained, or left for an animal to occupy.</p>
 
 <section class="chapter">
@@ -340,7 +413,8 @@ A cut tree. A temple lawn. Neither image shows a confrontation. The boundary app
 <section class="plate">
   <img src="assets/gaur-hills-bw.webp" alt="A gaur standing on a grass-covered hillside">
   <p class="caption"><span class="caption-num">Plate 04 · The Watcher</span>
-  A gaur stands above the photographer, framed by grass, sky and the thin human idea of a safe distance. There is no fence here. Only space, attention and the animal's decision to remain.</p>
+    <em>Gaur - Bos gaurus</em><br>
+  Framed by grass, sky and the thin human idea of a safe distance. There is no fence here. Only space, attention and the animal's decision to remain.</p>
 </section>
 
 <section class="chapter">
@@ -356,7 +430,7 @@ A cut tree. A temple lawn. Neither image shows a confrontation. The boundary app
   A priest and a stray pup asleep beside one another. Neither is performing a relationship. The photograph is interesting precisely because the boundary has temporarily disappeared.</p>
 </section>
 
-<figure class="confinement-image">
+<!-- <figure class="confinement-image">
   <img
     src="assets/dog_snow.webp"
     alt="A dog standing on the snow at Dayara Bugyal"
@@ -369,7 +443,21 @@ A cut tree. A temple lawn. Neither image shows a confrontation. The boundary app
       Our paths cross without meeting.
     </span>
   </figcaption>
+</figure> -->
+
+<section class="chapter chapter-confinement" style="padding: 0;">
+
+  <div class="chapter-intro" style="padding: 0;">
+    <!-- <h2>Sometimes, tresspassing is both ways!</h2> -->
+
+<figure class="confinement-image confinement-final" style="filter: none; padding: 0;">
+  <img src="assets/dog_snow.webp" style="filter: none" alt="A dog sitting beneath a table at a roadside restaurant" loading="lazy">
+  <figcaption>
+    <span class="image-location">Dayara Bugyal, Himalayas · 12,000 ft</span>
+  </figcaption>
 </figure>
+  </div>
+</section>
 
 <section class="chapter">
   <p class="chapter-num">V — The Street</p>
@@ -422,7 +510,7 @@ A cut tree. A temple lawn. Neither image shows a confrontation. The boundary app
   <img src="assets/langurs.webp" alt="A family of langurs in a tree">
 </div>
 <p class="caption" style="max-width:740px;margin:0 auto 5rem;padding:0 1rem;"><span class="caption-num">Plates 09–10 · Within the Reserve</span>
-The road here is not a city road cutting into an unknown forest. It is a managed line inside protected habitat — built for human access, yet still crossed on the animal's terms. Nearby, the langurs occupy the trees above it, indifferent to the distinction.</p>
+The road here is not a city road cutting into an unknown forest. It is a managed line inside protected habitat — built for human access, yet still crossed on the animal's terms. Nearby, the Macaques occupy the trees above it, indifferent to the distinction.</p>
 
 <section class="chapter">
   <p class="chapter-num">IX — In Flight</p>
@@ -434,6 +522,7 @@ The road here is not a city road cutting into an unknown forest. It is a managed
 <section class="plate">
   <img src="assets/bird-flight.webp" alt="A swallow in flight above a branch">
   <p class="caption"><span class="caption-num">Plate 11 · Passing Through</span>
+    <em>Barn Swallow - Hirundo rustica</em><br>
   At the edge of an unfinished bridge, a bird settles on a piece of steel left behind. Human construction ends where its attention begins.</p>
 </section>
 
@@ -483,6 +572,7 @@ The road here is not a city road cutting into an unknown forest. It is a managed
 
     <figcaption>
       <span class="image-location">Zoo</span>
+      <p class="caption"><em>White Rhinoceros - Ceratotherium simum</em></p><br>
       <span class="image-caption">
         A large animal in a very small world.
       </span>
@@ -501,6 +591,7 @@ The road here is not a city road cutting into an unknown forest. It is a managed
 
     <figcaption>
       <span class="image-location">Zoo</span>
+      <p class="caption"><em>Chimpanzee - Pan troglodytes</em></p><br>
       <span class="image-caption">
         We watch them. They watch us.
       </span>
@@ -519,12 +610,23 @@ The road here is not a city road cutting into an unknown forest. It is a managed
 
     <figcaption>
       <span class="image-location">Zoo</span>
+      <p class="caption"><em>Lion - Panthera leo</em></p><br>
       <span class="image-caption">
         A boundary made visible.
       </span>
     </figcaption>
   </figure>
 
+</section>
+<section class="chapter chapter-confinement" style="padding: 0;">
+
+  <div class="chapter-intro" style="padding: 0;">
+    <h2>Sometimes, trespassing goes both ways!</h2>
+
+<figure class="confinement-image confinement-final" style="filter: none; padding: 0;">
+  <img src="assets/IMG_6410.jpeg" style="filter: none" alt="A dog sitting beneath a table at a roadside restaurant" loading="lazy">
+</figure>
+  </div>
 </section>
 
 <section class="end" id="end">
@@ -533,7 +635,6 @@ The road here is not a city road cutting into an unknown forest. It is a managed
   <p>The photographs are fragments of a larger question: how do animals live with the boundaries humans draw around them — and what do those overlaps reveal about the way we share a landscape?</p>
   <div class="colophon">Priyadharshan S. · The Edge of Us · photographic study · India</div>
 </section>
-
 
 </body>
 </html>
