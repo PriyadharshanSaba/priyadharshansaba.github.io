@@ -281,14 +281,14 @@
   <section class="terminal">
 
     <div class="terminal-header">
-      <span class="tab active" data-tab="work">Work</span>
-      <span class="tab" data-tab="photo">Photography</span>
+      <span class="tab" data-tab="work">Work</span>
+      <span class="tab active" data-tab="photo">Photography</span>
     </div>
 
     <div class="terminal-scroll">
 
       <!-- WORK -->
-      <div class="panel active" data-panel="work">
+      <div class="panel" data-panel="work">
         <div class="terminal-center">
 
           <div class="ascii-marquee">
@@ -327,7 +327,7 @@
       </div>
 
       <!-- PHOTOGRAPHY -->
-      <div class="panel" data-panel="photo">
+      <div class="panel active" data-panel="photo">
         <div class="photo-panel">
           <div class="photo-panel-header">
             <p class="photo-panel-kicker">Photo Essays</p>
@@ -413,7 +413,7 @@
   // Back/forward navigation
   window.addEventListener("popstate", () => {
     const h = window.location.hash.replace("#", "");
-    activate(h === "photo" ? "photo" : "work");
+    activate(hash === "work" ? "work" : "photo");
   });
 </script>
 
