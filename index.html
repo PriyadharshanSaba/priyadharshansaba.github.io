@@ -241,6 +241,7 @@
     .ps1 { opacity: 0.45; }
 
     .out { opacity: 0.85; }
+    .out + .out { margin-top: 0.7rem; }
     .comment { opacity: 0.45; }
 
     .job { margin-bottom: 1.6rem; }
@@ -497,19 +498,10 @@
               <p class="plain-cv"><span class="comment"># prefer paper?</span> <a href="cv/">view traditional CV →</a></p>
 
               <section class="cv-section">
-                <p class="cmd"><span class="ps1">~$</span> cat summary.conf</p>
-                <dl class="kv">
-                  <dt>role</dt>
-                  <dd>Backend &amp; fullstack engineer</dd>
-                  <dt>experience</dt>
-                  <dd>7 years · fintech, B2B SaaS</dd>
-                  <dt>ships</dt>
-                  <dd>Payments, auth and billing, end to end</dd>
-                  <dt>ai_in_prod</dt>
-                  <dd>Vision-model extraction on the payment auth path, with human review for uncertain cases</dd>
-                  <dt>location</dt>
-                  <dd>Bengaluru · open to remote, flexible on timezone</dd>
-                </dl>
+                <p class="cmd"><span class="ps1">~$</span> cat summary.txt</p>
+                <p class="out">Backend and fullstack engineer, 7 years, building and operating production systems in fintech and B2B SaaS with primary focus on first principles, cost optimisation and lean systems.</p>
+                <p class="out">Worked on document-extraction pipeline using AI vision models. Ships payments, auth and billing with end to end ownership.</p>
+                <p class="out">Interested in distributed systems and mission-critical software. Based in Bengaluru, available for remote roles and flexible on timezone overlap.</p>
               </section>
 
               <section class="cv-section">
