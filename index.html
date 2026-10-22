@@ -47,27 +47,104 @@
       box-shadow: 0 0 0 1px #1f1f1f;
     }
 
-    .terminal-header {
+    /* Tab switcher under the name: DOS-style game buttons with a dithered drop shadow */
+    .tabs {
+      position: relative;
+      z-index: 0; /* own stacking context so the shadows paint behind the buttons */
       display: flex;
-      background: #1a1a1a;
-      border-bottom: 1px solid #2a2a2a;
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      justify-content: center;
+      align-items: center;
+      gap: 4.5ch;
+      margin-top: 18px;
+      font-size: 0.95rem;
     }
 
+    /*
+     * Raised = pressable, sunk = current tab.
+     * Buttons move with top/left (not transform) so the shadow stays behind them,
+     * and the shadow's inset moves the opposite way so it stays put on screen.
+     */
     .tab {
-      padding: 20px 32px;
-      font-size: 1.2rem;
-      opacity: 0.7;
+      position: relative;
+      top: 0;
+      left: 0;
+      font: inherit;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #d0d0d0;
+      background: #1c1c1c;
+      border: 1px solid #9a9a9a;
+      padding: 6px 2ch;
       cursor: pointer;
       user-select: none;
+      transition: top 0.08s, left 0.08s, color 0.15s, background 0.15s, border-color 0.15s;
     }
 
+    /* ░ shade shadow, offset down-right */
+    .tab::after {
+      content: "";
+      position: absolute;
+      inset: 6px -7px -7px 6px;
+      z-index: -1;
+      background: repeating-conic-gradient(#8a8a8a 0 25%, transparent 0 50%) 0 0 / 2px 2px;
+      transition: inset 0.08s;
+    }
+
+    /* Blinking menu cursor pointing at the button you can press */
+    .tab::before {
+      content: "▸";
+      position: absolute;
+      left: -2.4ch;
+      top: 50%;
+      translate: 0 -50%;
+      color: #e6e6e6;
+      animation: blink 1.1s steps(1) infinite;
+    }
+
+    .tab:not(.active):hover {
+      top: -2px;
+      left: -2px;
+      color: #fff;
+      border-color: #e6e6e6;
+    }
+    .tab:not(.active):hover::after { inset: 8px -9px -9px 8px; }
+    .tab:not(.active):hover::before { animation: none; }
+
+    /* Current tab: latched down into its shadow, inverse video */
+    .tab.active,
+    .tab:active {
+      top: 4px;
+      left: 4px;
+    }
+    .tab.active::after,
+    .tab:active::after { inset: 2px -3px -3px 2px; }
+
     .tab.active {
-      opacity: 1;
-      background: #0e0e0e;
-      border-bottom: 2px solid #e6e6e6;
+      color: #121212;
+      background: #e6e6e6;
+      border-color: #e6e6e6;
+      cursor: default;
+    }
+    .tab.active::before { content: none; }
+
+    .tab:focus-visible {
+      outline: 1px dashed #e6e6e6;
+      outline-offset: 5px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .tab, .tab::after { transition: none; }
+      .tab::before { animation: none; }
+    }
+
+    .tabs-hint {
+      margin-top: 18px;
+      font-size: 0.7rem;
+      opacity: 0.35;
+    }
+
+    @media (hover: none) {
+      .tabs-hint { display: none; }
     }
 
     .terminal-scroll {
@@ -118,9 +195,10 @@
       100% { transform: translateX(calc(-1 * var(--overflow))); }
     }
 
+    .terminal-center.panel-body { padding-top: 0; }
+
     .subtitle { margin: 20px 0 30px; }
     .name { font-size: 1.2rem; opacity: 0.9; }
-    .role { font-size: 1rem; opacity: 0.8; }
 
     .socials {
       display: flex;
@@ -232,7 +310,7 @@
 
     /* ---------- Photography ---------- */
     .photo-panel {
-      padding: clamp(2rem, 5vw, 5rem) clamp(1rem, 4vw, 4rem) 5rem;
+      padding: 1rem clamp(1rem, 4vw, 4rem) 5rem;
     }
 
     .photo-panel-header {
@@ -332,7 +410,7 @@
 
     /* ---------- Mobile ---------- */
     @media (max-width: 768px) {
-      .tab { padding: 12px 16px; font-size: 0.9rem; }
+      .tabs { font-size: 0.8rem; gap: 4ch; }
       .s { font-size: 0.55rem; }
       .terminal-center { padding: 32px 12px 0; }
       .cv { padding: 0 4px 64px; font-size: 0.8rem; }
@@ -342,7 +420,6 @@
       .pane-label-right { display: none; }
       .break { padding: 0; }
       .name { font-size: 1rem; }
-      .role { font-size: 0.85rem; }
 
       .ascii-track {
         --overflow: 28ch;
@@ -354,7 +431,7 @@
       }
 
       .photo-cards { grid-template-columns: 1fr; gap: 1.5rem; }
-      .photo-panel { padding: 2rem 1rem 4rem; }
+      .photo-panel { padding: 0.5rem 1rem 4rem; }
       .photo-panel-header { margin-bottom: 2rem; }
       .photo-card-title { font-size: 1.2rem; }
     }
@@ -366,16 +443,10 @@
 <main class="container">
   <section class="terminal">
 
-    <div class="terminal-header">
-      <span class="tab active" data-tab="work">Work</span>
-      <span class="tab" data-tab="photo">Photography</span>
-    </div>
-
     <div class="terminal-scroll">
 
-      <!-- WORK -->
-      <div class="panel active" data-panel="work">
-        <div class="terminal-center">
+      <!-- SHARED HEADER -->
+      <header class="terminal-center">
 
           <div class="ascii-marquee">
             <div class="ascii-track">
@@ -390,8 +461,18 @@
 
           <div class="subtitle">
             <p class="name">Priyadharshan S</p>
-            <p class="role">Fullstack &amp; Backend Engineer | Documentary Photographer</p>
+            <nav class="tabs" role="tablist" aria-label="Sections">
+              <button class="tab active" role="tab" aria-selected="true" data-tab="work">Work</button>
+              <button class="tab" role="tab" aria-selected="false" data-tab="photo">Travel Photography</button>
+            </nav>
+            <p class="tabs-hint">← → to switch</p>
           </div>
+
+      </header>
+
+      <!-- WORK -->
+      <div class="panel active" data-panel="work">
+        <div class="terminal-center panel-body">
 
           <div class="socials">
             <a href="https://www.linkedin.com/in/priyadharshan-sababathi/" target="_blank">LinkedIn</a>
@@ -586,18 +667,40 @@
   const tabs = document.querySelectorAll(".tab");
   const panels = document.querySelectorAll(".panel");
 
+  const order = [...tabs].map(t => t.dataset.tab);
+
   function activate(tabName) {
-    tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === tabName));
+    tabs.forEach(t => {
+      const on = t.dataset.tab === tabName;
+      t.classList.toggle("active", on);
+      t.setAttribute("aria-selected", on);
+    });
     panels.forEach(p => p.classList.toggle("active", p.dataset.panel === tabName));
   }
 
+  function select(name) {
+    if (document.querySelector(".tab.active").dataset.tab === name) return;
+    activate(name);
+    const newUrl = name === "work" ? location.pathname : `${location.pathname}#${name}`;
+    history.pushState({ tab: name }, "", newUrl);
+  }
+
   tabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      const name = tab.dataset.tab;
-      activate(name);
-      const newUrl = name === "work" ? location.pathname : `${location.pathname}#${name}`;
-      history.pushState({ tab: name }, "", newUrl);
-    });
+    tab.addEventListener("click", () => select(tab.dataset.tab));
+  });
+
+  // Keyboard: ←/→ or h/l move between tabs, focus follows if a tab was focused
+  document.addEventListener("keydown", e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const step = { ArrowLeft: -1, h: -1, ArrowRight: 1, l: 1 }[e.key];
+    if (!step) return;
+    const current = order.indexOf(document.querySelector(".tab.active").dataset.tab);
+    const next = order[(current + step + order.length) % order.length];
+    select(next);
+    if (document.activeElement.classList.contains("tab")) {
+      document.querySelector(`.tab[data-tab="${next}"]`).focus();
+    }
+    e.preventDefault();
   });
 
   // Deep-link via hash (#photo or #work)
