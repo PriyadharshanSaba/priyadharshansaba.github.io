@@ -140,14 +140,95 @@
       justify-content: center;
     }
 
-    .terminal-body {
+    /* CV rendered as terminal session output */
+    .cv {
+      width: 100%;
+      max-width: 82ch;
+      padding: 0 24px 80px;
       font-size: 0.85rem;
       line-height: 1.6;
       text-align: left;
-      max-width: 70ch;
-      padding-bottom: 80px;
-      white-space: pre-wrap;
     }
+
+    .cv-section { margin-bottom: 2.4rem; }
+
+    .cmd { margin-bottom: 0.7rem; }
+    .ps1 { opacity: 0.45; }
+
+    .out { opacity: 0.85; }
+    .comment { opacity: 0.45; }
+
+    .job { margin-bottom: 1.6rem; }
+    .job-title { font-weight: bold; }
+    .job-meta { opacity: 0.55; }
+
+    /* One bordered pane per employer, labels sit on the top border */
+    .pane {
+      position: relative;
+      border: 1px solid #333;
+      padding: 1.3rem 2.5ch 1.1rem;
+      margin: 1.6rem 0;
+      transition: border-color 0.3s ease;
+    }
+    .pane:hover { border-color: #5a5a5a; }
+
+    .pane-label {
+      position: absolute;
+      top: -0.8em;
+      left: 1.5ch;
+      padding: 0 1ch;
+      background: #121212;
+      font-weight: bold;
+    }
+    .pane-label-right {
+      left: auto;
+      right: 1.5ch;
+      font-weight: normal;
+      opacity: 0.55;
+    }
+
+    .pane > .comment { margin-bottom: 0.6rem; }
+
+    .pane-role + .pane-role {
+      border-top: 1px dashed #2a2a2a;
+      margin-top: 1rem;
+      padding-top: 1rem;
+    }
+
+    .break { margin: 1.6rem 0; padding: 0 2.5ch; }
+    .break a { color: inherit; }
+
+    .cv ul { list-style: none; margin-top: 0.4rem; }
+    .cv li {
+      position: relative;
+      padding-left: 2ch;
+      opacity: 0.85;
+    }
+    .cv li::before {
+      content: "-";
+      position: absolute;
+      left: 0;
+      opacity: 0.5;
+    }
+
+    .kv {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 0.3rem 2ch;
+    }
+    .kv dt { opacity: 0.55; }
+    .kv dd { opacity: 0.85; }
+
+    .cursor {
+      display: inline-block;
+      width: 1ch;
+      height: 1.1em;
+      vertical-align: text-bottom;
+      background: #e6e6e6;
+      animation: blink 1.1s steps(1) infinite;
+    }
+
+    @keyframes blink { 50% { opacity: 0; } }
 
     /* ---------- Photography ---------- */
     .photo-panel {
@@ -254,7 +335,12 @@
       .tab { padding: 12px 16px; font-size: 0.9rem; }
       .s { font-size: 0.55rem; }
       .terminal-center { padding: 32px 12px 0; }
-      .terminal-body { max-width: 90%; font-size: 0.8rem; }
+      .cv { padding: 0 4px 64px; font-size: 0.8rem; }
+      .kv { grid-template-columns: 1fr; gap: 0; }
+      .kv dd { margin-bottom: 0.6rem; }
+      .pane { padding: 1.3rem 1.5ch 1rem; }
+      .pane-label-right { display: none; }
+      .break { padding: 0; }
       .name { font-size: 1rem; }
       .role { font-size: 0.85rem; }
 
@@ -281,14 +367,14 @@
   <section class="terminal">
 
     <div class="terminal-header">
-      <span class="tab" data-tab="work">Work</span>
-      <span class="tab active" data-tab="photo">Photography</span>
+      <span class="tab active" data-tab="work">Work</span>
+      <span class="tab" data-tab="photo">Photography</span>
     </div>
 
     <div class="terminal-scroll">
 
       <!-- WORK -->
-      <div class="panel" data-panel="work">
+      <div class="panel active" data-panel="work">
         <div class="terminal-center">
 
           <div class="ascii-marquee">
@@ -304,7 +390,7 @@
 
           <div class="subtitle">
             <p class="name">Priyadharshan S</p>
-            <p class="role">Software Engineer | Passionate Photographer</p>
+            <p class="role">Fullstack &amp; Backend Engineer | Documentary Photographer</p>
           </div>
 
           <div class="socials">
@@ -315,19 +401,126 @@
           </div>
 
           <div class="terminal-bullets">
-            <pre class="terminal-body">
-1  Hi, I'm Priyadharshan, based in Bangalore, India.
-2  Backend software engineer with 5+ years of experience.
-3  Building scalable, reliable systems with end-to-end ownership.
-4  Python, C, Unix
-            </pre>
+            <div class="cv">
+
+              <section class="cv-section">
+                <p class="cmd"><span class="ps1">~$</span> cat summary.conf</p>
+                <dl class="kv">
+                  <dt>role</dt>
+                  <dd>Backend &amp; fullstack engineer</dd>
+                  <dt>experience</dt>
+                  <dd>7 years · fintech, B2B SaaS</dd>
+                  <dt>ships</dt>
+                  <dd>Payments, auth and billing, end to end</dd>
+                  <dt>ai_in_prod</dt>
+                  <dd>Vision-model extraction on the payment auth path, with human review for uncertain cases</dd>
+                  <dt>location</dt>
+                  <dd>Bengaluru · open to remote, flexible on timezone</dd>
+                </dl>
+              </section>
+
+              <section class="cv-section">
+                <p class="cmd"><span class="ps1">~$</span> cat experience.log</p>
+
+                <div class="pane">
+                  <p class="pane-label">Bodha Ventures LLP</p>
+                  <p class="pane-label pane-label-right">2026 – now</p>
+                  <p class="comment"># Early-stage financial-literacy venture.</p>
+                  <p class="job-title">Co-Founder, Product Engineering &amp; Operations</p>
+                  <p class="job-meta">Bengaluru · May 2026 – Present</p>
+                  <ul>
+                    <li>Shipped the entire product solo — Next.js, React 19 and TypeScript on PostgreSQL (Neon), deployed on Vercel.</li>
+                    <li>Built the payments and invoicing path end to end — Razorpay with HMAC-SHA256 webhook verification, an idempotent payment→invoice handoff, and GST-compliant invoicing with gapless per-year numbering and buyer-state tax computation.</li>
+                    <li>Google OAuth, passwordless email-OTP auth with rate-limited codes, httpOnly cookie sessions and middleware route gating.</li>
+                  </ul>
+                </div>
+
+                <div class="pane">
+                  <p class="pane-label">SuperPe Marketplace</p>
+                  <p class="pane-label pane-label-right">2024 – 2026</p>
+                  <p class="comment"># Consumer fintech; high-volume payment and transaction flows.</p>
+                  <p class="job-title">Software Engineer II</p>
+                  <p class="job-meta">Bengaluru · Mar 2024 – Jun 2025, Dec 2025 – Jun 2026</p>
+                  <ul>
+                    <li>Owned a document-extraction pipeline running inline on the payment authorisation path — on the order of tens of thousands of invoice and credit-card images a day through AWS Textract and Google Document AI.</li>
+                    <li>Cross-checked model-extracted cardholder names against BBPS biller records rather than trusting OCR alone, for credit card ownership verification. Routed high-confidence extractions to automated decisions.</li>
+                    <li>Cut cloud spend by 70% — $1,100/day to $330/day — by reworking service logic and moving to microservices.</li>
+                    <li>Improved API latency 25×, taking critical endpoints from 20s to under 800ms on high-volume financial operations.</li>
+                    <li>Cut MTTD by over 40% with self-hosted telemetry; led 3 engineers and established the incident-response workflow.</li>
+                  </ul>
+                </div>
+
+                <p class="comment break"># Career break (Jun–Dec 2025): documentary photography across India, with freelance software work alongside. <a href="#photo">https://priyadharshansaba.github.io/#photo</a></p>
+
+                <div class="pane">
+                  <p class="pane-label">Hiver</p>
+                  <p class="pane-label pane-label-right">2019 – 2024</p>
+                  <p class="comment"># B2B SaaS; email collaboration at scale.</p>
+
+                  <div class="pane-role">
+                    <p class="job-title">Software Engineer II</p>
+                    <p class="job-meta">Bengaluru · Jan 2022 – Feb 2024</p>
+                    <ul>
+                      <li>Owned telemetry across services — built the fault-detection and alerting layer, cutting time-to-detection and on-call load.</li>
+                      <li>Architected service boundaries for fault isolation and ran Kubernetes on AWS for deployment and scaling; resolved recurring latency and traffic-spike failures affecting platform stability by building monitoring and alerting systems.</li>
+                    </ul>
+                  </div>
+
+                  <div class="pane-role">
+                    <p class="job-title">Software Engineer I</p>
+                    <p class="job-meta">Bengaluru · Aug 2019 – Dec 2021</p>
+                    <ul>
+                      <li>Increased Gmail sync throughput by rebuilding large-scale message ingestion pipelines.</li>
+                      <li>Built fault-tolerant queues, caching layers and async task pipelines on Redis, Kafka, RabbitMQ and MySQL.</li>
+                    </ul>
+                  </div>
+                </div>
+              </section>
+
+              <section class="cv-section">
+                <p class="cmd"><span class="ps1">~$</span> cat skills.conf</p>
+                <dl class="kv">
+                  <dt>languages</dt>
+                  <dd>Python, JavaScript, C (learning)</dd>
+                  <dt>ai_ml_in_prod</dt>
+                  <dd>AWS Textract, Google Document AI, structured extraction</dd>
+                  <dt>infrastructure</dt>
+                  <dd>AWS, GCP, Kubernetes, cost optimisation</dd>
+                  <dt>observability</dt>
+                  <dd>Datadog, Logstash, custom telemetry, alerting, incident response, root-cause analysis</dd>
+                </dl>
+              </section>
+
+              <section class="cv-section">
+                <p class="comment job"># open source</p>
+                <p class="out">Independently verified a <a href="https://github.com/redis/redis-py/pull/3863" target="_blank" style="color: inherit;">redis-py connection-handling fix (#3863)</a> at the network level by building a fault-injecting TCP proxy between the client and a live Redis instance, reproducing genuine connection resets during handshake.</p>
+              </section>
+
+              <section class="cv-section">
+                <p class="comment job"># education</p>
+                <p class="out">B.E., Computer Science and Engineering — Visvesvaraya Technological University</p>
+                <p class="job-meta">2015 – 2019</p>
+              </section>
+
+              <section class="cv-section">
+                <p class="comment job"># beyond engineering</p>
+                <ul>
+                  <li>Documentary / travel photography — first prize, Manotsava.</li>
+                  <li>Guest lectures on financial literacy at colleges for Bodha.</li>
+                  <li>Training Muay Thai and Brazilian jiu-jitsu.</li>
+                </ul>
+              </section>
+
+              <p class="cmd"><span class="ps1">~$</span> <span class="cursor"></span></p>
+
+            </div>
           </div>
 
         </div>
       </div>
 
       <!-- PHOTOGRAPHY -->
-      <div class="panel active" data-panel="photo">
+      <div class="panel" data-panel="photo">
         <div class="photo-panel">
           <div class="photo-panel-header">
             <p class="photo-panel-kicker">Photo Essays</p>
@@ -414,7 +607,7 @@
   // Back/forward navigation
   window.addEventListener("popstate", () => {
     const h = window.location.hash.replace("#", "");
-    activate(hash === "work" ? "work" : "photo");
+    activate(h === "photo" ? "photo" : "work");
   });
 </script>
 
