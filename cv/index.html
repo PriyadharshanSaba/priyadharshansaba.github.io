@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Priyadharshan Sababathi — CV</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CV of Priyadharshan Sababathi — Fullstack & Backend Engineer, Bengaluru." />
+  <style>
+    body {
+      font-family: Calibri, Carlito, sans-serif;
+      max-width: 800px;
+      margin: 1em auto;
+      padding: 0 1em;
+      line-height: 1.35;
+    }
+    h1, h2 { margin-bottom: 0.3em; }
+    h2 { font-size: 1.1em; border-bottom: 1px solid; }
+    h3 { font-size: 1em; margin: 0.8em 0 0; }
+    p, ul, dl { margin: 0.3em 0; }
+    dt { font-weight: bold; float: left; margin-right: 0.4em; }
+    dd { margin: 0; }
+    @media print {
+      nav { display: none; }
+      body { margin: 0; max-width: none; font-size: 10pt; }
+    }
+  </style>
+</head>
+<body>
+
+<nav><a href="../">← back</a></nav>
+
+<h1>Priyadharshan Sababathi</h1>
+<p>Fullstack &amp; Backend Engineer · Bengaluru, India</p>
+<p>
+  <a href="mailto:priyadharshan.97@gmail.com">priyadharshan.97@gmail.com</a> ·
+  <a href="https://www.linkedin.com/in/priyadharshan-sababathi/">linkedin.com/in/priyadharshan-sababathi</a> ·
+  <a href="https://github.com/PriyadharshanSaba">github.com/PriyadharshanSaba</a> ·
+  <a href="https://priyadharshansaba.github.io/">priyadharshansaba.github.io</a>
+</p>
+
+<h2>Summary</h2>
+<p>Backend and fullstack engineer, 7 years, building and operating production systems in fintech and B2B SaaS. At SuperPe, owned a document-extraction pipeline that ran vendor vision models on the payment authorisation path under an RBI mandate — model output drove automated allow / block decisions, with uncertain cases routed to human review. Ships payments, auth and billing end to end; cut cloud spend 70% and API latency 25× on high-volume payment flows. Based in Bengaluru, available for remote roles and flexible on timezone overlap.</p>
+
+<h2>Experience</h2>
+
+<h3>Co-Founder, Product Engineering &amp; Operations — Bodha Ventures LLP</h3>
+<p>Bengaluru · May 2026 – Present<br><i>Early-stage financial-literacy venture.</i></p>
+<ul>
+  <li><b>Shipped the entire product solo</b> — Next.js, React 19 and TypeScript on PostgreSQL (Neon), deployed on Vercel.</li>
+  <li><b>Built the payments and invoicing path end to end</b> — Razorpay with HMAC-SHA256 webhook verification, an idempotent payment→invoice handoff, and GST-compliant invoicing with gapless per-year numbering and buyer-state tax computation.</li>
+  <li><b>Google OAuth, passwordless email-OTP auth</b> with rate-limited codes, httpOnly cookie sessions and middleware route gating.</li>
+</ul>
+
+<h3>Software Engineer II — SuperPe Marketplace</h3>
+<p>Bengaluru · Mar 2024 – Jun 2025, Dec 2025 – Jun 2026<br><i>Consumer fintech; high-volume payment and transaction flows.</i></p>
+<ul>
+  <li><b>Owned a document-extraction pipeline running inline on the payment authorisation path</b> — on the order of tens of thousands of invoice and credit-card images a day through AWS Textract and Google Document AI.</li>
+  <li><b>Cross-checked model-extracted cardholder names against BBPS biller records</b> rather than trusting OCR alone, for credit card ownership verification. Routed high-confidence extractions to automated decisions.</li>
+  <li><b>Cut cloud spend by 70%</b> — $1,100/day to $330/day — by reworking service logic and moving to microservices.</li>
+  <li><b>Improved API latency 25×</b>, taking critical endpoints from 20s to under 800ms on high-volume financial operations.</li>
+  <li><b>Cut MTTD by over 40%</b> with self-hosted telemetry; led 3 engineers and established the incident-response workflow.</li>
+</ul>
+
+<p><i>Career break (Jun–Dec 2025): documentary photography across India, with freelance software work alongside.</i></p>
+
+<h3>Software Engineer II — Hiver</h3>
+<p>Bengaluru · Jan 2022 – Feb 2024<br><i>B2B SaaS; email collaboration at scale.</i></p>
+<ul>
+  <li><b>Owned telemetry across services</b> — built the fault-detection and alerting layer, cutting time-to-detection and on-call load.</li>
+  <li><b>Architected service boundaries for fault isolation</b> and ran Kubernetes on AWS for deployment and scaling; resolved recurring latency and traffic-spike failures affecting platform stability by building monitoring and alerting systems.</li>
+</ul>
+
+<h3>Software Engineer I — Hiver</h3>
+<p>Bengaluru · Aug 2019 – Dec 2021</p>
+<ul>
+  <li>Increased Gmail sync throughput by rebuilding large-scale message ingestion pipelines.</li>
+  <li>Built fault-tolerant queues, caching layers and async task pipelines on Redis, Kafka, RabbitMQ and MySQL.</li>
+</ul>
+
+<h2>Technical Skills</h2>
+<dl>
+  <dt>Languages:</dt> <dd>Python, JavaScript, C (learning)</dd>
+  <dt>AI / ML in production:</dt> <dd>AWS Textract, Google Document AI, structured extraction</dd>
+  <dt>Infrastructure:</dt> <dd>AWS, GCP, Kubernetes, cost optimisation</dd>
+  <dt>Observability:</dt> <dd>Datadog, Logstash, custom telemetry, alerting, incident response, root-cause analysis</dd>
+</dl>
+
+<h2>Open Source</h2>
+<p><b>Independently verified a <a href="https://github.com/redis/redis-py/pull/3863">redis-py connection-handling fix (#3863)</a> at the network level</b> by building a fault-injecting TCP proxy between the client and a live Redis instance, reproducing genuine connection resets during handshake.</p>
+
+<h2>Education</h2>
+<p><b>B.E., Computer Science and Engineering</b> — Visvesvaraya Technological University · 2015 – 2019</p>
+
+<h2>Beyond Engineering</h2>
+<p>Documentary / travel photography — first prize, Manotsava. Guest lectures on financial literacy at colleges for Bodha.<br>
+Training Muay Thai and Brazilian jiu-jitsu.</p>
+
+</body>
+</html>
