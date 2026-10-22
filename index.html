@@ -369,8 +369,11 @@
       object-fit: cover;
       display: block;
       filter: brightness(0.85);
-      transition: filter 0.6s ease, transform 1.2s ease;
+      opacity: 0;
+      transition: opacity 0.5s ease, filter 0.6s ease, transform 1.2s ease;
     }
+
+    .photo-card-image.loaded { opacity: 1; }
 
     .photo-card:hover .photo-card-image {
       filter: brightness(1);
@@ -611,12 +614,7 @@
           <div class="photo-cards">
             <a class="photo-card" href="edge_of_us/">
             <div class="photo-card-image-wrap">
-              <img
-                class="photo-card-image"
-                src="edge_of_us/assets/bear-shrine.webp"
-                alt="The Edge of Us"
-                loading="lazy"
-              />
+              <img class="photo-card-image" data-src="thumbs/edge-of-us.webp" alt="The Edge of Us" width="800" height="600" decoding="async" />
             </div>
 
             <div class="photo-card-meta">
@@ -631,7 +629,7 @@
 
             <a class="photo-card" href="india/">
               <div class="photo-card-image-wrap">
-                <img class="photo-card-image" src="pooram/assets/DSC09910-25.webp" alt="India · 2025" loading="lazy" />
+                <img class="photo-card-image" data-src="thumbs/india-2025.webp" alt="India · 2025" width="800" height="600" decoding="async" />
               </div>
               <div class="photo-card-meta">
                 <span class="photo-card-kicker">A Year on the Road</span>
@@ -643,7 +641,7 @@
 
             <a class="photo-card" href="pooram/">
               <div class="photo-card-image-wrap">
-                <img class="photo-card-image" src="pooram/images/DSC00486-no%20grain.jpg" alt="Thrissur Pooram" loading="lazy" />
+                <img class="photo-card-image" data-src="thumbs/thrissur-pooram.webp" alt="Thrissur Pooram" width="800" height="600" decoding="async" />
               </div>
               <div class="photo-card-meta">
                 <span class="photo-card-kicker">A Photo Essay · May 2025</span>
@@ -676,6 +674,7 @@
       t.setAttribute("aria-selected", on);
     });
     panels.forEach(p => p.classList.toggle("active", p.dataset.panel === tabName));
+    if (tabName === "photo") loadThumbs();
   }
 
   function select(name) {
@@ -702,6 +701,24 @@
     }
     e.preventDefault();
   });
+
+  // Photo card thumbnails: fetched one at a time, in order, once the Work page has fully
+  // loaded (or straight away if the photo tab is opened first), so they never compete with it.
+  const thumbs = [...document.querySelectorAll(".photo-card-image[data-src]")];
+  let thumbsStarted = false;
+
+  function loadThumbs() {
+    if (thumbsStarted) return;
+    thumbsStarted = true;
+    thumbs.reduce((prev, img) => prev.then(() => new Promise(done => {
+      img.addEventListener("load", () => { img.classList.add("loaded"); done(); }, { once: true });
+      img.addEventListener("error", done, { once: true });
+      img.src = img.dataset.src;
+    })), Promise.resolve());
+  }
+
+  if (document.readyState === "complete") loadThumbs();
+  else window.addEventListener("load", loadThumbs);
 
   // Deep-link via hash (#photo or #work)
   const hash = window.location.hash.replace("#", "");
