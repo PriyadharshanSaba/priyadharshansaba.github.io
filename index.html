@@ -179,13 +179,18 @@
       display: inline-block;
       white-space: nowrap;
       --overflow: 38ch;
-      animation: flicker 6s infinite;
     }
 
-    @keyframes flicker {
-      0%, 96%, 100% { opacity: 1; }
-      97% { opacity: 0.35; }
-      98% { opacity: 1; }
+    .ascii-track .s { text-shadow: 0 0 6px rgba(230, 230, 230, 0.18); }
+
+    /* Haunted flicker: JS adds .haunt for a short, irregular burst every few seconds */
+    .ascii-marquee.haunt .s {
+      transform: translateX(var(--tear, 0));
+      text-shadow: -2px 0 rgba(255, 0, 48, 0.75), 2px 0 rgba(0, 220, 255, 0.45);
+    }
+    .ascii-marquee.haunt.blood .s {
+      color: #c4001f;
+      text-shadow: 0 0 8px rgba(196, 0, 31, 0.6);
     }
 
     @keyframes marquee {
@@ -434,7 +439,7 @@
 
       .ascii-track {
         --overflow: 28ch;
-        animation: flicker 6s infinite, marquee 16s linear infinite;
+        animation: marquee 16s linear infinite;
       }
 
       .ascii-marquee {
@@ -720,6 +725,37 @@
 
   if (document.readyState === "complete") loadThumbs();
   else window.addEventListener("load", loadThumbs);
+
+  // Banner flicker like a dying tube: random bursts of dropouts, rows tearing sideways,
+  // and a red/cyan split; now and then it goes blood red. Off for reduced motion.
+  const banner = document.querySelector(".ascii-marquee");
+  const rows = [...banner.querySelectorAll(".s")];
+  const still = matchMedia("(prefers-reduced-motion: reduce)");
+  const rand = (a, b) => a + Math.random() * (b - a);
+
+  function haunt() {
+    if (still.matches || document.hidden) return scheduleHaunt();
+
+    let frames = Math.round(rand(4, 11));
+    banner.classList.add("haunt");
+    banner.classList.toggle("blood", Math.random() < 0.15);
+
+    (function tick() {
+      if (frames-- <= 0) {
+        banner.classList.remove("haunt", "blood");
+        banner.style.opacity = "";
+        rows.forEach(r => r.style.removeProperty("--tear"));
+        return scheduleHaunt();
+      }
+      const blackout = Math.random() < 0.12;
+      banner.style.opacity = blackout ? 0.03 : Math.random() < 0.4 ? rand(0.05, 0.25) : rand(0.6, 1);
+      rows.forEach(r => r.style.setProperty("--tear", Math.random() < 0.35 ? `${Math.round(rand(-14, 14))}px` : "0px"));
+      setTimeout(tick, blackout ? rand(250, 450) : rand(40, 120));
+    })();
+  }
+
+  function scheduleHaunt() { setTimeout(haunt, rand(1000, 3500)); }
+  haunt();
 
   // Deep-link via hash (#photo or #work)
   const hash = window.location.hash.replace("#", "");
