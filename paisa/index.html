@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Paisa — A Build Log · Priyadharshan S</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta name="description" content="Paisa reads bank emails and shows what was actually spent this month, leaving out money lent to friends, moved between your own accounts or paid on a card bill. A build log by Priyadharshan S." />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Priyadharshan S" />
+  <meta property="og:title" content="Paisa — A Build Log" />
+  <meta property="og:description" content="A spending tracker that reads bank emails and counts only what was actually spent." />
+  <meta property="og:url" content="https://priyadharshansaba.github.io/paisa/" />
+  <meta property="og:image" content="https://priyadharshansaba.github.io/paisa/og.png" />
+  <meta property="og:image:secure_url" content="https://priyadharshansaba.github.io/paisa/og.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Paisa — terminal-style banner" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Paisa — A Build Log" />
+  <meta name="twitter:description" content="A spending tracker that reads bank emails and counts only what was actually spent." />
+  <meta name="twitter:image" content="https://priyadharshansaba.github.io/paisa/og.png" />
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0e0e0e;
+      color: #e6e6e6;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    .terminal {
+      max-width: 1100px;
+      min-height: 100vh;
+      margin: 0 auto;
+      background: #121212;
+      box-shadow: 0 0 0 1px #1f1f1f;
+      padding-bottom: 80px;
+    }
+
+    a { color: inherit; }
+
+    .back {
+      display: inline-block;
+      padding: 18px 24px 0;
+      font-size: 0.8rem;
+      opacity: 0.6;
+      text-decoration: none;
+    }
+    .back:hover { opacity: 1; text-decoration: underline; }
+
+    /* ---------- Banner ---------- */
+    .terminal-center {
+      text-align: center;
+      padding: 40px 24px 0;
+    }
+
+    .banner {
+      margin-bottom: 12px;
+      font-size: clamp(0.5rem, 2.9vw, 0.95rem);
+    }
+
+    .s {
+      white-space: pre;
+      line-height: 1.05;
+      text-align: center;
+      text-shadow: 0 0 6px rgba(230, 230, 230, 0.18);
+    }
+
+    /* Below this the banner gets too small to read: plain heading instead */
+    .banner-plain {
+      display: none;
+      font-size: 1.6rem;
+      letter-spacing: 0.4em;
+      margin-bottom: 8px;
+    }
+
+    .name { font-size: 1.2rem; opacity: 0.9; margin-top: 20px; }
+
+    .kicker {
+      margin-top: 10px;
+      font-size: 0.7rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      opacity: 0.55;
+    }
+
+    .lede {
+      max-width: 56ch;
+      margin: 28px auto 0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      opacity: 0.9;
+    }
+
+    .links {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+    .links a { text-decoration: none; }
+    .links a:hover { text-decoration: underline; opacity: 1; }
+
+    /* ---------- Sections ---------- */
+    .cv {
+      max-width: 82ch;
+      margin: 0 auto;
+      padding: 0 24px;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .cv-section { margin-top: 3.2rem; }
+
+    .cmd {
+      font-size: inherit;
+      font-weight: normal;
+      margin-bottom: 0.7rem;
+    }
+    .ps1 { opacity: 0.45; }
+    .out { opacity: 0.85; }
+    .out + .out { margin-top: 0.7rem; }
+    .comment { opacity: 0.45; }
+
+    .cv ul { list-style: none; margin-top: 0.4rem; }
+    .cv li {
+      position: relative;
+      padding-left: 2ch;
+      opacity: 0.85;
+    }
+    .cv li + li { margin-top: 0.6rem; }
+    .cv li::before {
+      content: "-";
+      position: absolute;
+      left: 0;
+      opacity: 0.5;
+    }
+
+    .pane {
+      position: relative;
+      border: 1px solid #333;
+      padding: 1.3rem 2.5ch 1.1rem;
+      margin: 1.6rem 0;
+      transition: border-color 0.3s ease;
+    }
+    .pane:hover { border-color: #5a5a5a; }
+
+    .pane-label {
+      position: absolute;
+      top: -0.8em;
+      left: 1.5ch;
+      padding: 0 1ch;
+      background: #121212;
+      font-weight: bold;
+    }
+
+    /* Drafts the author still has to rewrite: impossible to miss */
+    .pane.draft { border-style: dashed; border-color: #6a6a6a; }
+    .pane.draft .pane-label { font-weight: normal; opacity: 0.8; }
+
+    .kv {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 0.3rem 2ch;
+    }
+    .kv dt { opacity: 0.55; }
+    .kv dd { opacity: 0.85; }
+
+    /* ---------- Screenshots ---------- */
+    .shots-wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .shots {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 1.2rem;
+    }
+
+    .phone { flex: 0 0 210px; }
+
+    .bezel {
+      position: relative;
+      aspect-ratio: 390 / 844;
+      background: #050505;
+      border: 1px solid #3a3a3a;
+      border-radius: 30px;
+      padding: 9px;
+    }
+
+    .screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 22px;
+      overflow: hidden;
+      background: #0b0b0b;
+    }
+    .screen img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+    }
+
+    .placeholder {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 0.4rem;
+      border: 1px dashed #3a3a3a;
+      border-radius: inherit;
+      text-align: center;
+      font-size: 0.7rem;
+      line-height: 1.4;
+      opacity: 0.6;
+    }
+
+    .shots figcaption {
+      margin-top: 0.7rem;
+      font-size: 0.75rem;
+      text-align: center;
+      opacity: 0.45;
+    }
+
+    .swipe-hint { display: none; }
+
+    /* ---------- For engineers ---------- */
+    .eng {
+      margin-top: 3.2rem;
+      border: 1px solid #333;
+    }
+
+    .eng > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 1rem 2.5ch;
+      user-select: none;
+    }
+    .eng > summary::-webkit-details-marker { display: none; }
+    .eng > summary::before { content: "▸ "; opacity: 0.6; }
+    .eng[open] > summary::before { content: "▾ "; }
+    .eng > summary:hover { background: #161616; }
+    .eng > summary:focus-visible { outline: 1px dashed #e6e6e6; outline-offset: 4px; }
+
+    .eng-body {
+      padding: 0 2.5ch 1.6rem;
+      border-top: 1px solid #2a2a2a;
+    }
+
+    .eng h3 {
+      font-size: inherit;
+      font-weight: normal;
+      margin: 2rem 0 0.7rem;
+    }
+
+    .tree {
+      overflow-x: auto;
+      font: inherit;
+      line-height: 1.5;
+      white-space: pre;
+      opacity: 0.9;
+    }
+
+    .decisions { counter-reset: d; }
+    .decisions .pane { margin: 1.4rem 0; }
+    .decisions .pane-label::before {
+      counter-increment: d;
+      content: counter(d) ". ";
+      opacity: 0.5;
+    }
+    .decisions code { opacity: 1; }
+
+    .log { list-style: none; }
+    .log li {
+      display: grid;
+      grid-template-columns: 8ch 1fr;
+      gap: 0 1ch;
+      padding-left: 0 !important;
+    }
+    .log li::before { content: none !important; }
+    .log li + li { margin-top: 0.45rem; }
+    .log .hash { color: #c9b26d; opacity: 0.85; }
+    .log .comment { display: block; }
+
+    .cursor {
+      display: inline-block;
+      width: 1ch;
+      height: 1.1em;
+      vertical-align: text-bottom;
+      background: #e6e6e6;
+      animation: blink 1.1s steps(1) infinite;
+    }
+
+    @keyframes blink { 50% { opacity: 0; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cursor { animation: none; }
+    }
+
+    /* ---------- Mobile ---------- */
+    @media (max-width: 768px) {
+      .terminal-center { padding: 28px 16px 0; }
+      .cv { padding: 0 16px; font-size: 0.8rem; }
+      .shots-wrap { padding: 0; }
+      .kv { grid-template-columns: 1fr; gap: 0; }
+      .kv dd { margin-bottom: 0.6rem; }
+      .pane { padding: 1.3rem 1.5ch 1rem; }
+      .eng > summary { padding: 1rem 1.5ch; }
+      .eng-body { padding: 0 1.5ch 1.4rem; }
+      .name { font-size: 1rem; }
+      .lede { font-size: 0.85rem; }
+
+      /* Screenshots become a swipeable strip */
+      .shots {
+        justify-content: flex-start;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-padding: 0 16px;
+        padding: 0 16px 12px;
+        gap: 16px;
+        scrollbar-width: thin;
+        scrollbar-color: #333 transparent;
+      }
+      .phone {
+        flex-basis: min(64vw, 240px);
+        scroll-snap-align: center;
+      }
+      .swipe-hint { display: block; padding: 0 16px; font-size: 0.75rem; }
+    }
+
+    @media (max-width: 300px) {
+      .banner { display: none; }
+      .banner-plain { display: block; }
+    }
+  </style>
+</head>
+
+<body>
+
+<main class="terminal">
+
+  <a class="back" href="../">~$ cd ..</a>
+
+  <!-- 1. BANNER -->
+  <header class="terminal-center">
+    <div class="banner" aria-hidden="true">
+      <div class="s">██████╗  █████╗ ██╗███████╗ █████╗ </div>
+      <div class="s">██╔══██╗██╔══██╗██║██╔════╝██╔══██╗</div>
+      <div class="s">██████╔╝███████║██║███████╗███████║</div>
+      <div class="s">██╔═══╝ ██╔══██║██║╚════██║██╔══██║</div>
+      <div class="s">██║     ██║  ██║██║███████║██║  ██║</div>
+      <div class="s">╚═╝     ╚═╝  ╚═╝╚═╝╚══════╝╚═╝  ╚═╝</div>
+    </div>
+    <p class="banner-plain" aria-hidden="true">PAISA</p>
+
+    <h1 class="name">Paisa</h1>
+    <p class="kicker">A Build Log · Oct 2026</p>
+
+    <p class="lede">Paisa reads the emails my banks already send and tells me what I actually spent this month, without counting money I lent to friends, moved between my own accounts or paid on a card bill.</p>
+
+    <div class="links">
+      <!-- TODO: there is no public demo — the app signs in one Google address and holds real bank data. Add a link here if you ever host a demo copy with made-up data. -->
+      <!-- TODO: the repo (github.com/PriyadharshanSaba/paisa) is private, so a link would 404 for visitors. If you make a public copy, swap this line for:
+           <a href="https://github.com/PriyadharshanSaba/paisa" target="_blank">Source on GitHub</a> -->
+      <span>source: private repo, on request</span>
+      <a href="mailto:priyadharshan.97@gmail.com">Email</a>
+      <a href="../">Portfolio</a>
+    </div>
+  </header>
+
+  <!-- 2. HOW IT LOOKS -->
+  <section class="cv-section">
+    <div class="cv">
+      <h2 class="cmd"><span class="ps1" aria-hidden="true">~$</span> How it looks</h2>
+      <p class="comment"># a web app built for the phone first; it installs to the home screen</p>
+    </div>
+
+    <div class="shots-wrap">
+      <!-- TODO: screenshots. Each .placeholder is swapped for an <img>, e.g.
+           <img src="shots/month.webp" alt="This month: spending against the monthly target" width="390" height="844" loading="lazy" />
+           See SCREENSHOTS.md for exactly what to capture. -->
+      <div class="shots">
+        <figure class="phone">
+          <div class="bezel"><div class="screen">
+            <div class="placeholder">[ screenshot ]<span>this month</span><span>390 × 844</span><span>shots/month.webp</span></div>
+          </div></div>
+          <figcaption># this month · mobile</figcaption>
+        </figure>
+
+        <figure class="phone">
+          <div class="bezel"><div class="screen">
+            <div class="placeholder">[ screenshot ]<span>review</span><span>390 × 844</span><span>shots/review.webp</span></div>
+          </div></div>
+          <figcaption># review · mobile</figcaption>
+        </figure>
+
+        <figure class="phone">
+          <div class="bezel"><div class="screen">
+            <div class="placeholder">[ screenshot ]<span>worth</span><span>390 × 844</span><span>shots/worth.webp</span></div>
+          </div></div>
+          <figcaption># worth · mobile</figcaption>
+        </figure>
+
+        <figure class="phone">
+          <div class="bezel"><div class="screen">
+            <div class="placeholder">[ screenshot ]<span>goals</span><span>390 × 844</span><span>shots/goals.webp</span></div>
+          </div></div>
+          <figcaption># goals · mobile</figcaption>
+        </figure>
+      </div>
+      <p class="comment swipe-hint"># swipe →</p>
+
+    </div>
+  </section>
+
+  <div class="cv">
+
+    <!-- 3. WHAT IT DOES -->
+    <section class="cv-section">
+      <h2 class="cmd"><span class="ps1" aria-hidden="true">~$</span> What it does</h2>
+      <ul>
+        <li><b>Fills itself in.</b> Payments arrive from the alert emails and statements banks already send, so there is almost nothing to type.</li>
+        <li><b>Counts only real spending.</b> Money lent to a friend, moved between my own accounts or used to pay off a card is kept, but never added to what I spent.</li>
+        <li><b>Asks instead of guessing.</b> Anything it does not recognise waits for me to tag it once, and next time it remembers.</li>
+        <li><b>Shows what the money is for.</b> Savings, investments and goals sit on one bar, with a timeline of when each policy or account pays out.</li>
+      </ul>
+    </section>
+
+    <!-- 4. WHY I BUILT IT -->
+    <section class="cv-section">
+      <h2 class="cmd"><span class="ps1" aria-hidden="true">~$</span> Why I built it</h2>
+      <!-- TODO: DRAFT, written from ARCHITECTURE.md and the commit history. Rewrite in your own words. -->
+      <div class="pane draft">
+        <p class="pane-label">TODO · draft, rewrite in your words</p>
+        <p class="out">I wanted one honest answer to "how much did I spend this month?" Banking apps answer a different question: how much left the account.</p>
+        <p class="out">When I sorted one real month by hand, the gap was big. A loan to a friend, money passed on to someone else and other people's share of a group dinner made the month look about two-thirds more expensive than it was.</p>
+        <p class="out">So Paisa reads the emails my banks already send, counts only what was really spent, and asks me rather than guessing. It is built for one person, me, and runs on my own hosting.</p>
+      </div>
+    </section>
+
+    <!-- 5. FOR ENGINEERS -->
+    <details class="eng">
+      <summary><span class="ps1" aria-hidden="true">~$</span> For engineers <span class="comment"># stack, structure, decisions, timeline</span></summary>
+      <div class="eng-body">
+
+        <h3><span class="comment"># stack</span></h3>
+        <dl class="kv">
+          <dt>language</dt>
+          <dd>Python 3.11+</dd>
+          <dt>web</dt>
+          <dd>Flask 3, server-rendered Jinja templates, one blueprint</dd>
+          <dt>data</dt>
+          <dd>SQLite locally and in tests; Postgres on Neon in production (psycopg 3); hand-written SQL, no ORM</dd>
+          <dt>ingestion</dt>
+          <dd>Gmail API, read-only scope; pypdf for password-protected statement PDFs</dd>
+          <dt>auth</dt>
+          <dd>Google sign-in (google-auth), one allowed address</dd>
+          <dt>frontend</dt>
+          <dd>Vanilla CSS and inline JS, no build step; a web app manifest so it installs to the home screen</dd>
+          <dt>hosting</dt>
+          <dd>Vercel (runs <code>wsgi.py</code>) + Neon</dd>
+          <dt>tests</dt>
+          <dd>pytest, 271 tests</dd>
+        </dl>
+
+        <h3><span class="comment"># structure</span></h3>
+<pre class="tree">paisa/
+├── app/
+│   ├── __init__.py    <span class="comment"># create_app(): an explicit file is always SQLite</span>
+│   ├── views.py       <span class="comment"># every route</span>
+│   ├── queries.py     <span class="comment"># read models; templates do no arithmetic</span>
+│   ├── money.py       <span class="comment"># paise ⇄ rupees, lakh/crore grouping</span>
+│   ├── rules.py       <span class="comment"># merchant rules, first match by priority</span>
+│   ├── db.py          <span class="comment"># one SQL for SQLite and Postgres</span>
+│   ├── auth.py        <span class="comment"># Google sign-in, one address</span>
+│   ├── importers/     <span class="comment"># PhonePe statement: preview, then commit</span>
+│   ├── ingest/        <span class="comment"># Gmail sync: fetch, parse, dedupe, write</span>
+│   │   └── banks/     <span class="comment"># one parser per bank format + anonymised fixtures</span>
+│   ├── templates/     <span class="comment"># month, review, goals, worth, trends…</span>
+│   └── static/        <span class="comment"># one stylesheet, icons, manifest</span>
+├── migrations/        <span class="comment"># 21 numbered .sql files, applied in order</span>
+│   └── pg/            <span class="comment"># the same history for Postgres</span>
+├── scripts/           <span class="comment"># migrate, seed, OAuth setup, SQLite → Neon copy</span>
+├── tests/             <span class="comment"># pytest, real anonymised emails as fixtures</span>
+└── wsgi.py            <span class="comment"># what Vercel runs</span></pre>
+
+        <h3><span class="comment"># key decisions</span></h3>
+        <div class="decisions">
+          <div class="pane">
+            <p class="pane-label">Money is integer paise</p>
+            <p class="out">Every amount is an <code>INTEGER</code> of paise (<code>BIGINT</code> on Postgres), never a float. Parsing goes through <code>Decimal</code> with explicit <code>ROUND_HALF_UP</code>, in one module. A float round-trip turns 470.82 into 470.81999…, and a month's total drifts. Indian lakh/crore grouping is done by hand, not with <code>locale</code>, and typed amounts like "18L" or "40k" are multiplied as exact decimals.</p>
+          </div>
+          <div class="pane">
+            <p class="pane-label"><code>kind</code> decides what counts as spending</p>
+            <p class="out">Each row has a kind: spend, invest, lent, repaid or transfer. Only <code>spend</code> is summed as living costs. A card bill payment is a transfer, so a purchase is never counted twice, and a split bill becomes two rows sharing a <code>split_group</code>: my share as spend, the rest as lent.</p>
+          </div>
+          <div class="pane">
+            <p class="pane-label">One source of truth per account</p>
+            <p class="out">A phone payment shows up in the payment app and in the bank's alert email. Each account names the one source allowed to write its rows. Messages from any other source are dropped and recorded in <code>email_seen</code> with the reason, so nothing disappears silently.</p>
+          </div>
+          <div class="pane">
+            <p class="pane-label">Three kinds of duplicate</p>
+            <p class="out">A partial unique index on the bank reference (UTR) makes the database reject a second copy of the same payment. A re-import of the same row is skipped. A same-amount row within ±1 day from another source is flagged <code>maybe_dupe_of</code> for review, never merged by guess.</p>
+          </div>
+          <div class="pane">
+            <p class="pane-label">Idempotent sync, two-step import</p>
+            <p class="out">The Gmail cursor moves only when a sync finishes. A sync that dies halfway replays the range next time, and the unique message ids make the replay a no-op. A pasted statement import is two endpoints: <code>/import/preview</code> writes nothing, <code>/import/commit</code> writes.</p>
+          </div>
+          <div class="pane">
+            <p class="pane-label">Statements must add up</p>
+            <p class="out">A statement parser checks its lines against the statement's own totals and balances. If they don't reconcile, nothing is written.</p>
+          </div>
+          <div class="pane">
+            <p class="pane-label">No silent guesses</p>
+            <p class="out">An unmatched payment lands with <code>needs_review = 1</code> and no category. A rule may file a payment by itself only up to ₹2,000. Above that the match is a suggestion, and emailed rows are never auto-filed.</p>
+          </div>
+          <div class="pane">
+            <p class="pane-label">Two databases, one SQL</p>
+            <p class="out">Queries are written once in SQLite style; the Postgres connection translates placeholders. Every migration exists twice. Inserts that may fail run inside a <code>SAVEPOINT</code>, because Postgres aborts the whole transaction otherwise. Tests always get a SQLite file and can never reach production.</p>
+          </div>
+          <div class="pane">
+            <p class="pane-label">A private mode for demos</p>
+            <p class="out">One toggle masks every amount, person and account number as <code>****</code>, and makes the app read-only. The masking filters are context-aware, so Jinja can't fold a literal at compile time and leak it. A sweep test renders every page in private mode and checks that no amount or name is left.</p>
+          </div>
+          <div class="pane">
+            <p class="pane-label">Tested against real data</p>
+            <p class="out">Parser fixtures are real bank emails and statements, anonymised. A real statement must parse to an exact row count and paise total, checked against the bank by hand. If a change moves that number, the parser is wrong, not the fixture.</p>
+          </div>
+        </div>
+
+        <h3><span class="ps1" aria-hidden="true">~$</span> git log --oneline</h3>
+        <ul class="log">
+          <li><span class="hash">3df11f3</span><span>Worth: carry bank balances forward from their statement with the alerts since <span class="comment"># 24 Oct · balance stays current between statements</span></span></li>
+          <li><span class="hash">112b1dd</span><span>Retirement accounts, private shares, goal tweaks <span class="comment"># 24 Oct · long-term money on the roadmap, out of today's total</span></span></li>
+          <li><span class="hash">4952844</span><span>Private mode for showing the app; tab bar slides sideways only <span class="comment"># 23 Oct</span></span></li>
+          <li><span class="hash">d36293f</span><span>Zerodha cash, Worth edits, loans, Worth layout <span class="comment"># 23 Oct · money lent to friends, and settling it</span></span></li>
+          <li><span class="hash">699c6d0</span><span>Scrub address and CAS ID from the CAS fixture; bring five tests up to date <span class="comment"># 23 Oct · privacy pass on test data</span></span></li>
+          <li><span class="hash">a3eaf86</span><span>worth panel <span class="comment"># 23 Oct · net worth: statement balances, investments, policies</span></span></li>
+          <li><span class="hash">45e6c9a</span><span>Statements, rewards, card alerts, auto-tagging, investments, recurring <span class="comment"># 23 Oct</span></span></li>
+          <li><span class="hash">040e71f</span><span>Vercel: install production deps from pyproject base, run wsgi.py <span class="comment"># 21 Oct · first deploy fix</span></span></li>
+          <li><span class="hash">852db6f</span><span>Goals: compact cards that expand, priority chip, high priority first <span class="comment"># 21 Oct</span></span></li>
+          <li><span class="hash">4051ef9</span><span>to_postgres: read NEON_DATABASE_URL, then render every page against Postgres <span class="comment"># 21 Oct</span></span></li>
+          <li><span class="hash">0bbbf5e</span><span>Paisa: spending tracker with Gmail ingestion, goals, and Vercel/Neon hosting <span class="comment"># 21 Oct · first commit</span></span></li>
+        </ul>
+
+      </div>
+    </details>
+
+    <!-- 6. BUILT WITH CLAUDE CODE -->
+    <section class="cv-section">
+      <h2 class="cmd"><span class="ps1" aria-hidden="true">~$</span> Built with Claude Code</h2>
+      <!-- TODO: DRAFT, neutral on purpose. Check every claim about what you directed or reviewed, and edit. -->
+      <div class="pane draft">
+        <p class="pane-label">TODO · draft, check and edit</p>
+        <p class="out">Paisa was built over four days in October 2026 in sessions with Claude Code, Anthropic's coding agent, which wrote most of the code and tests. Nearly every commit lists it as a co-author.</p>
+        <p class="out">I decided what the app should do and which rules it must never break, chose the stack and hosting, supplied real bank emails and statements as test data, and checked each change against my own accounts. When a number looked wrong, such as broker cash being counted twice, I caught it and sent it back.</p>
+      </div>
+    </section>
+
+    <p class="cmd" style="margin-top: 3.2rem;"><span class="ps1">~$</span> <a href="../" style="text-decoration: none;">cd ..</a> <span class="cursor"></span></p>
+
+  </div>
+
+</main>
+
+</body>
+</html>
