@@ -112,6 +112,27 @@ h1{font:400 clamp(3.7rem,9vw,8.5rem)/.9 var(--serif);margin:0;letter-spacing:-.0
 .end h2{font:400 clamp(2.7rem,6vw,5.5rem)/.95 var(--serif);margin:0 auto 1.5rem;max-width:900px}
 .end p{max-width:680px;margin:0 auto;font:300 1rem/1.7 var(--sans);color:#aaa9a2}
 .colophon{margin-top:5rem;padding-top:1.6rem;font:400 .65rem/1.6 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:#73756f}
+/* Comments (portfolio-engage widget). Scoped under .comments-section to beat the .end p rules. */
+.comments-section{max-width:640px;margin:4rem auto 0;text-align:left}
+.comments-section .pe-comments h3{font:400 1.6rem var(--serif);margin:0 0 1rem;color:var(--ink)}
+.comments-section input,.comments-section textarea{
+  display:block;width:100%;margin:0 0 .6rem;padding:.7rem .8rem;
+  font:300 1rem var(--sans);color:var(--ink);background:transparent;
+  border:1px solid var(--rule);border-radius:2px;resize:none
+}
+.comments-section textarea{resize:vertical}
+.comments-section input:focus,.comments-section textarea:focus{outline:1px solid var(--muted);border-color:var(--muted)}
+.comments-section button{
+  font:400 .7rem var(--sans);letter-spacing:.18em;text-transform:uppercase;
+  padding:.7rem 1.4rem;color:var(--bg);background:var(--ink);border:0;cursor:pointer
+}
+.comments-section button:disabled{opacity:.5;cursor:default}
+.comments-section small{margin-left:.8rem;font:300 .8rem var(--sans);color:var(--muted)}
+.comments-section .pe-list{margin-top:2rem}
+.comments-section .pe-list article{padding:1rem 0;border-top:1px solid var(--rule)}
+.comments-section .pe-list strong{font:500 .85rem var(--sans);color:var(--ink)}
+.comments-section .pe-list time{font:300 .75rem var(--sans);color:var(--muted);margin-left:.5rem}
+.comments-section .pe-list p{max-width:none;margin:.4rem 0 0;font:300 1.05rem/1.55 var(--sans);color:#d8d4cb;white-space:pre-wrap;overflow-wrap:anywhere}
 @media(max-width:800px){
   .intro{grid-template-columns:1fr}
   .intro-image{min-height:70svh}
@@ -634,6 +655,14 @@ The road here is not a city road cutting into an unknown forest. It is a managed
   <h2>Where Our Worlds Meet</h2>
   <p>The photographs are fragments of a larger question: how do animals live with the boundaries humans draw around them — and what do those overlaps reveal about the way we share a landscape?</p>
   <div class="colophon">Priyadharshan S. · The Edge of Us · photographic study · India</div>
+
+  <!-- COMMENTS (portfolio-engage) -->
+  <div class="comments-section">
+    <div id="comments"></div>
+    <script src="embed.js"
+            data-api="https://engage-api-ochre.vercel.app/api"
+            data-site="github-io" data-slug="edge-of-us" data-target="#comments"></script>
+  </div>
 </section>
 
 </body>
