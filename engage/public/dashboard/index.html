@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Visitors · last 10 days</title>
+<style>
+  :root {
+    --bg: #f5f2ec; --card: #fffdf8; --ink: #1a1a1a; --muted: #6b6b6b; --rule: #d9d4ca; --bar: #3b6ea5; --bar-hi: #1f4f86;
+    --sans: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0e1110; --card: #161a18; --ink: #e9e5dc; --muted: #9b9b92; --rule: #2b2e2b; --bar: #6fa2d6; --bar-hi: #9cc3ea; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--sans); }
+  main { max-width: 720px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 1.4rem; font-weight: 600; margin: .5rem 0 1rem; }
+  h2 { font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin: 0 0 .5rem; }
+  form { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  input, button { font: inherit; padding: .6rem .75rem; border-radius: 6px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); min-height: 44px; }
+  input { flex: 1 1 140px; min-width: 0; }
+  button { background: var(--ink); color: var(--bg); border-color: var(--ink); cursor: pointer; padding-inline: 1.2rem; }
+  button:disabled { opacity: .5; cursor: default; }
+  .card { background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+  .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .kpi { margin: 0; }
+  .kpi b { display: block; font-size: 2rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .kpi span { color: var(--muted); font-size: .85rem; }
+  .bars { display: flex; align-items: flex-end; gap: 4px; height: 130px; }
+  .bar { flex: 1; min-width: 0; background: var(--bar); border-radius: 3px 3px 0 0; min-height: 2px; }
+  .bar:hover, .bar:focus { background: var(--bar-hi); outline: none; }
+  .days { display: flex; gap: 4px; margin-top: 4px; }
+  .days span { flex: 1; text-align: center; font-size: .7rem; color: var(--muted); }
+  .note { color: var(--muted); font-size: .8rem; margin: .6rem 0 0; }
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: 6px 0; border-top: 1px solid var(--rule); font-size: .95rem; overflow-wrap: anywhere; }
+  tr:first-child td { border-top: 0; }
+  td:last-child { text-align: right; padding-left: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .empty { color: var(--muted); }
+  #msg { color: #b3261e; margin: 0 0 12px; min-height: 1.5em; }
+  @media (prefers-color-scheme: dark) { #msg { color: #f2b8b5; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Visitors · last 10 days</h1>
+  <form id="f">
+    <input name="site" value="github-io" placeholder="site" aria-label="Site name" required>
+    <input name="token" type="password" placeholder="admin token" aria-label="Admin token" autocomplete="current-password" required>
+    <button id="go">Load</button>
+  </form>
+  <p id="msg" role="status"></p>
+  <div id="out"></div>
+</main>
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var form = $("#f"), out = $("#out"), msg = $("#msg"), go = $("#go");
+  var api = location.origin + "/api";
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
+  }
+  function card(title) {
+    var c = el("section", "card");
+    c.append(el("h2", "", title));
+    return c;
+  }
+  function table(title, rows) {
+    var c = card(title), t = el("table");
+    if (!rows.length) { var tr = el("tr"); tr.append(el("td", "empty", "No data yet")); t.append(tr); }
+    rows.forEach(function (r) {
+      var tr = el("tr"); tr.append(el("td", "", r[0]), el("td", "", String(r[1]))); t.append(tr);
+    });
+    c.append(t);
+    return c;
+  }
+  function render(s) {
+    out.replaceChildren();
+    var k = el("div", "kpis");
+    [[s.totalViews, "views"], [s.uniqueVisitors, "visitors (approx.)"]].forEach(function (x) {
+      var d = el("div", "card kpi"); d.append(el("b", "", String(x[0])), el("span", "", x[1])); k.append(d);
+    });
+    out.append(k);
+
+    var max = Math.max(1, Math.max.apply(null, s.byDay.map(function (d) { return d.views; })));
+    var c = card("Views per day"), bars = el("div", "bars"), days = el("div", "days");
+    bars.setAttribute("role", "img");
+    bars.setAttribute("aria-label", "Views per day: " + s.byDay.map(function (d) { return d.day + " " + d.views; }).join(", "));
+    s.byDay.forEach(function (d) {
+      var b = el("div", "bar"); b.style.height = (d.views / max * 100) + "%";
+      b.title = d.day + ": " + d.views + " views, " + d.visitors + " visitors";
+      bars.append(b);
+      days.append(el("span", "", String(Number(d.day.slice(8)))));
+    });
+    c.append(bars, days, el("p", "note", s.byDay[0].day + " to " + s.byDay[s.byDay.length - 1].day + " (UTC). Peak: " + max + " views/day."));
+    out.append(c);
+
+    out.append(
+      table("Cities", s.topCities.map(function (x) { return [x.city + (x.country ? ", " + x.country : ""), x.views]; })),
+      table("Countries", s.topCountries.map(function (x) { return [x.country, x.views]; })),
+      table("Pages", s.topPages.map(function (x) { return [x.path, x.views]; })),
+      table("Referrers", s.topReferrers.map(function (x) { return [x.referrer, x.views]; }))
+    );
+  }
+
+  function load(site, token) {
+    msg.textContent = ""; go.disabled = true;
+    return fetch(api + "/stats?site=" + encodeURIComponent(site) + "&days=10", { headers: { authorization: "Bearer " + token } })
+      .then(function (r) {
+        if (r.status === 401) throw new Error("Wrong admin token.");
+        if (!r.ok) throw new Error("Server error (" + r.status + ").");
+        return r.json();
+      })
+      .then(render)
+      .catch(function (e) { out.replaceChildren(); msg.textContent = e.message === "Failed to fetch" ? "Couldn't reach the API." : e.message; })
+      .then(function () { go.disabled = false; });
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var site = form.site.value.trim(), token = form.token.value;
+    try { sessionStorage.setItem("engage", JSON.stringify({ site: site, token: token })); } catch (x) {}
+    load(site, token);
+  });
+
+  try {
+    var saved = JSON.parse(sessionStorage.getItem("engage") || "null");
+    if (saved && saved.token) { form.site.value = saved.site; form.token.value = saved.token; load(saved.site, saved.token); }
+  } catch (x) {}
+})();
+</script>
+</body>
+</html>

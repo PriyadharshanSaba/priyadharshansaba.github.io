@@ -1,0 +1,23 @@
+{
+  "name": "portfolio-engage",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Reusable comments + privacy-friendly analytics for portfolio sites",
+  "exports": {
+    ".": "./src/index.ts",
+    "./libsql": "./src/adapters/libsql.ts"
+  },
+  "scripts": {
+    "test": "node --test test/engage.test.ts test/libsql.test.ts test/analytics.test.ts",
+    "dev": "node src/dev-server.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2"
+  }
+}
