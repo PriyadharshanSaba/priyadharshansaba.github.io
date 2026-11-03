@@ -9,20 +9,14 @@
     "./libsql": "./src/adapters/libsql.ts"
   },
   "scripts": {
-    "test": "node --test test/engage.test.ts test/libsql.test.ts",
+    "test": "node --test test/engage.test.ts test/libsql.test.ts test/analytics.test.ts",
     "dev": "node src/dev-server.ts",
     "typecheck": "tsc --noEmit"
   },
-  "peerDependencies": {
+  "dependencies": {
     "@libsql/client": "^0.18.0"
   },
-  "peerDependenciesMeta": {
-    "@libsql/client": {
-      "optional": true
-    }
-  },
   "devDependencies": {
-    "@libsql/client": "^0.18.0",
     "@types/node": "^26.6.6",
     "typescript": "^7.0.2"
   }

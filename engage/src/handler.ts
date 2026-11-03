@@ -14,6 +14,22 @@ export interface Options {
   statsDays?: number; // default 10
   /** Max comments per visitor per hour. Default 5. */
   commentsPerHour?: number;
+  /** Chance (0..1) that a view request also purges rows older than 90 days. Default 0.02. */
+  cleanupChance?: number;
+}
+
+const DEDUPE_MS = 15 * 60_000;           // one view per visitor per page per 15 minutes
+const RETENTION_MS = 90 * 86_400_000;    // keep 90 days of views
+
+/** Common crawlers, link previewers, headless browsers and scripts. Not exhaustive. */
+const BOT_RE = /bot|crawl|spider|slurp|headless|preview|facebookexternalhit|embedly|lighthouse|pingdom|uptime|monitor|curl|wget|python-requests|httpclient|axios|node-fetch|go-http/i;
+const isBot = (ua: string | null) => !ua || BOT_RE.test(ua);
+
+/** "/india/index.html?utm=x#top" -> "/india/" so one page is one row. */
+function normalizePath(raw: string) {
+  let p = raw.split("#")[0].split("?")[0].slice(0, 200);
+  if (!p.startsWith("/")) p = "/" + p;
+  return p.replace(/index\.html$/, "");
 }
 
 const json = (data: unknown, status: number, cors: HeadersInit) =>
@@ -90,11 +106,23 @@ export function createHandler(opts: Options) {
       if (route === "view" && req.method === "POST") {
         const b = await req.json() as Record<string, unknown>;
         if (!b.site || !b.path) return json({ error: "site and path required" }, 400, cors);
+        // Bots and clients with no user-agent get the same quiet 204, but are never counted.
+        if (isBot(req.headers.get("user-agent"))) return new Response(null, { status: 204, headers: cors });
+
+        const site = String(b.site).slice(0, 60);
+        const path = normalizePath(String(b.path));
         const visitor = await visitorHash(req, opts.salt);
-        await store.addView({
-          site: String(b.site), path: String(b.path).slice(0, 200), visitor, ...geo(req.headers),
-          referrer: b.referrer ? String(b.referrer).slice(0, 200) : undefined, ts: Date.now(),
-        });
+        const now = Date.now();
+        // Navigating between your own pages is not a "referrer" worth reporting.
+        let referrer = b.referrer ? String(b.referrer).slice(0, 200) : undefined;
+        try { if (referrer && origin && referrer === new URL(origin).hostname) referrer = undefined; } catch { /* bad origin header */ }
+        if (!(await store.hasRecentView(site, path, visitor, now - DEDUPE_MS))) {
+          await store.addView({ site, path, visitor, ...geo(req.headers), referrer, ts: now });
+        }
+        // Retention: occasionally purge old rows so no scheduled job is needed.
+        if (Math.random() < (opts.cleanupChance ?? 0.02)) {
+          try { await store.deleteViewsBefore(now - RETENTION_MS); } catch { /* never fail a view over cleanup */ }
+        }
         return new Response(null, { status: 204, headers: cors });
       }
 

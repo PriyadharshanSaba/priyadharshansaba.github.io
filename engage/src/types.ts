@@ -39,6 +39,10 @@ export interface Store {
   /** Comments posted by this hash since `sinceTs` (rate limiting). */
   countRecentComments(ipHash: string, sinceTs: number): Promise<number>;
   addView(v: PageView): Promise<void>;
+  /** True if this visitor already viewed this page since `sinceTs` (dedupe reloads). */
+  hasRecentView(site: string, path: string, visitor: string, sinceTs: number): Promise<boolean>;
+  /** Retention: remove views older than `ts`. */
+  deleteViewsBefore(ts: number): Promise<void>;
   /** Raw views for a site since `sinceTs`; aggregation lives in core so it is backend-independent. */
   viewsSince(site: string, sinceTs: number): Promise<PageView[]>;
 }

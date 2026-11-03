@@ -23,8 +23,8 @@ test("honeypot and disallowed origin are rejected", async () => {
 });
 
 test("views -> 10-day stats with city, admin only", async () => {
-  await call("view", { method: "POST", body: JSON.stringify({ site: "photo", path: "/" }), headers: { "x-vercel-ip-city": "Bengaluru", "x-vercel-ip-country": "IN", "x-forwarded-for": "1.1.1.1" } });
-  await call("view", { method: "POST", body: JSON.stringify({ site: "photo", path: "/" }), headers: { "x-vercel-ip-city": "Bengaluru", "x-vercel-ip-country": "IN", "x-forwarded-for": "2.2.2.2" } });
+  await call("view", { method: "POST", body: JSON.stringify({ site: "photo", path: "/" }), headers: { "x-vercel-ip-city": "Bengaluru", "x-vercel-ip-country": "IN", "x-forwarded-for": "1.1.1.1", "user-agent": "Mozilla/5.0 Safari" } });
+  await call("view", { method: "POST", body: JSON.stringify({ site: "photo", path: "/" }), headers: { "x-vercel-ip-city": "Bengaluru", "x-vercel-ip-country": "IN", "x-forwarded-for": "2.2.2.2", "user-agent": "Mozilla/5.0 Safari" } });
   assert.equal((await call("stats?site=photo")).status, 401);
   const s = await (await call("stats?site=photo", { headers: { authorization: "Bearer t" } })).json();
   assert.equal(s.byDay.length, 10);

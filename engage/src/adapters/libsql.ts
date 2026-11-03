@@ -45,6 +45,12 @@ export async function libsqlStore(db: Db): Promise<Store> {
       await q(`INSERT INTO views VALUES (?,?,?,?,?,?,?)`,
         [v.site, v.path, v.visitor, v.country ?? null, v.city ?? null, v.referrer ?? null, v.ts]);
     },
+    async hasRecentView(site, path, visitor, since) {
+      const r = await q(`SELECT 1 FROM views WHERE site=? AND path=? AND visitor=? AND ts>=? LIMIT 1`,
+        [site, path, visitor, since]);
+      return r.rows.length > 0;
+    },
+    async deleteViewsBefore(ts) { await q(`DELETE FROM views WHERE ts<?`, [ts]); },
     async viewsSince(site, since) {
       const r = await q(`SELECT * FROM views WHERE site=? AND ts>=?`, [site, since]);
       return r.rows.map((x) => ({

@@ -37,3 +37,15 @@ test("pending mode hides comments until approved", async () => {
   await h(new Request("http://x/api/moderate", { method: "POST", headers: { authorization: "Bearer t" }, body: JSON.stringify({ id: created.id, status: "visible" }) }));
   assert.equal((await (await h(new Request(url))).json()).length, 1);
 });
+
+test("libsql: dedupe lookup and retention delete work in real SQL", async () => {
+  const store = await libsqlStore(createClient({ url: ":memory:" }));
+  const now = Date.now();
+  await store.addView({ site: "s", path: "/a/", visitor: "v1", ts: now - 20 * 60_000 });
+  await store.addView({ site: "s", path: "/b/", visitor: "v1", ts: now - 100 * 86_400_000 });
+  assert.equal(await store.hasRecentView("s", "/a/", "v1", now - 15 * 60_000), false); // 20 min ago: outside window
+  assert.equal(await store.hasRecentView("s", "/a/", "v1", now - 30 * 60_000), true);  // inside a wider window
+  assert.equal(await store.hasRecentView("s", "/a/", "v2", now - 30 * 60_000), false); // different visitor
+  await store.deleteViewsBefore(now - 90 * 86_400_000);
+  assert.deepEqual((await store.viewsSince("s", 0)).map((v) => v.path), ["/a/"]);
+});
