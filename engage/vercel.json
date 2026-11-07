@@ -1,4 +1,6 @@
 {
+  "buildCommand": "node scripts/fetch-lists.mjs",
+  "outputDirectory": "public",
   "functions": {
     "api/*.ts": { "includeFiles": "data/**" }
   }

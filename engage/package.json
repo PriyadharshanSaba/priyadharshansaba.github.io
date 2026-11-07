@@ -11,7 +11,7 @@
   "scripts": {
     "test": "node --test test/engage.test.ts test/libsql.test.ts test/analytics.test.ts test/stats.test.ts test/network.test.ts test/network-views.test.ts test/network-loader.test.ts",
     "lists": "node scripts/fetch-lists.mjs",
-    "deploy": "node scripts/fetch-lists.mjs && npx vercel --prod",
+    "deploy": "npx vercel --prod",
     "dev": "node src/dev-server.ts",
     "typecheck": "tsc --noEmit"
   },

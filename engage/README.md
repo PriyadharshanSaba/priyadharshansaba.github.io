@@ -63,7 +63,7 @@ checked against the [X4BNet/lists_vpn](https://github.com/X4BNet/lists_vpn) netw
 
 **Licensing:** the X4BNet repo has no LICENSE file, and its data is built from IPLocate's IP-to-ASN database,
 which asks for attribution ("IP address data powered by IPLocate.io"). Because of that the lists are **not
-committed** here: `npm run lists` downloads them into `engage/data/` (git-ignored) at deploy time.
+committed** here. They are downloaded into `engage/data/` (git-ignored): on Vercel by the build step, locally by `npm run lists`.
 
 ## Local development
 `npm run lists` once to download the lists, then `npm run dev` serves the API at `http://localhost:8787/api`,
@@ -71,10 +71,15 @@ plus `/track.js` and `/dashboard` from `public/`. Without the lists everything w
 Secrets go in `engage/.env` (git-ignored). Never commit it. Use a separate Turso database for local work.
 
 ## Deploying
-From `engage/`: **`npm run deploy`** (downloads fresh lists, then runs `vercel --prod`). The lists reach Vercel
-through `vercel.json` (`includeFiles`) and `.vercelignore` (which keeps the git-ignored `data/` in the upload).
-Refresh by redeploying; the dashboard notes how old the lists are.
-Plain `npx vercel --prod` also works but ships whatever is in `data/` (or no lists if `data/` is missing).
+From `engage/`: **`npm run deploy`** (same as `npx vercel --prod`).
+
+The VPN/datacenter lists are fetched **on Vercel during the build** (`vercel.json` `buildCommand` runs
+`scripts/fetch-lists.mjs`), so every deploy ships fresh lists and nothing needs downloading on your machine.
+`includeFiles` puts the downloaded `data/` folder into the function. The lists are refreshed **per deploy**, not on a
+schedule; the dashboard shows how old they are and warns after 30 days.
+
+If GitHub can't be reached (3 tries) or a list looks truncated, the script exits with an error, the **build fails**,
+and the previous deployment keeps serving. Re-run the deploy to retry.
 
 **Do not connect the Vercel project to the GitHub repo**: Vercel would build the whole site repo and replace
 the API with a static site.
