@@ -39,6 +39,17 @@
   tr:first-child td { border-top: 0; }
   td:last-child { text-align: right; padding-left: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .empty { color: var(--muted); }
+  .kpi .extra { display: block; font-size: .8rem; margin-top: 2px; }
+  .warn { color: var(--muted); font-size: .85rem; border-left: 3px solid var(--rule); padding-left: 10px; margin: 0 0 12px; }
+  details.flagged { margin-top: 8px; border-top: 1px solid var(--rule); }
+  details.flagged summary { list-style: none; cursor: pointer; min-height: 44px; display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: .95rem; }
+  details.flagged summary::-webkit-details-marker { display: none; }
+  details.flagged summary::before { content: "\25B8"; font-size: .8rem; }
+  details.flagged[open] summary::before { content: "\25BE"; }
+  details.flagged[open] summary { color: var(--ink); }
+  details.flagged summary b { margin-left: auto; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+  details.flagged .hint { color: var(--muted); font-size: .8rem; margin: 0 0 6px; }
+  details.flagged summary:focus-visible { outline: 2px solid var(--bar); outline-offset: 2px; }
   #msg { color: #b3261e; margin: 0 0 12px; min-height: 1.5em; }
   @media (prefers-color-scheme: dark) { #msg { color: #f2b8b5; } }
 </style>
@@ -71,15 +82,29 @@
     c.append(el("h2", "", title));
     return c;
   }
-  function table(title, rows) {
-    var c = card(title), t = el("table");
-    if (!rows.length) { var tr = el("tr"); tr.append(el("td", "empty", "No data yet")); t.append(tr); }
+  function rowsTable(rows, emptyText) {
+    var t = el("table");
+    if (!rows.length && emptyText) { var tr = el("tr"); tr.append(el("td", "empty", emptyText)); t.append(tr); }
     rows.forEach(function (r) {
       var tr = el("tr"); tr.append(el("td", "", r[0]), el("td", "", String(r[1]))); t.append(tr);
     });
-    c.append(t);
+    return t;
+  }
+  // `flagged` (optional) = { rows, total }: VPN / datacenter traffic, shown in a collapsible row under the table.
+  function table(title, rows, flagged) {
+    var c = card(title);
+    c.append(rowsTable(rows, "No data yet"));
+    if (flagged && flagged.rows.length) {
+      var d = el("details", "flagged"), sm = el("summary");
+      sm.append(el("span", "", "VPN / datacenter"), el("b", "", flagged.total + (flagged.total === 1 ? " visit" : " visits")));
+      d.append(sm,
+        el("p", "hint", "Likely bots, scanners, cloud servers or VPN users. Not counted in the list above."),
+        rowsTable(flagged.rows));
+      c.append(d);
+    }
     return c;
   }
+  var NET = { vpn: "VPN", datacenter: "Datacenter" };
   // "IN" -> "India". The browser knows country names, so no lookup table is needed.
   var regions = null;
   try { regions = new Intl.DisplayNames(["en"], { type: "region" }); } catch (x) {}
@@ -92,9 +117,16 @@
   }
   function render(s) {
     out.replaceChildren();
+    var fl = s.flagged || { visits: 0, cities: [], countries: [] };
+    if (s.networkLists && !s.networkLists.loaded) {
+      out.append(el("p", "warn", "The VPN / datacenter lists aren't loaded on the server, so no traffic is being grouped yet."));
+    }
     var k = el("div", "kpis");
-    [[s.visits, "visits (one per person per day)"], [s.totalViews, "page views (every page opened)"]].forEach(function (x) {
-      var d = el("div", "card kpi"); d.append(el("b", "", String(x[0])), el("span", "", x[1])); k.append(d);
+    [[s.visits, "visits (one per person per day)", fl.visits ? "includes " + fl.visits + " from VPN / datacenter" : ""],
+     [s.totalViews, "page views (every page opened)", ""]].forEach(function (x) {
+      var d = el("div", "card kpi"); d.append(el("b", "", String(x[0])), el("span", "", x[1]));
+      if (x[2]) d.append(el("span", "extra", x[2]));
+      k.append(d);
     });
     out.append(k);
 
@@ -113,12 +145,25 @@
     out.append(c);
 
     // Cities, countries and pages count people per day (visits). Referrers count page views.
+    // Cities and countries show regular traffic; VPN / datacenter traffic sits in the collapsible row below each.
     out.append(
-      table("Cities · visits", s.topCities.map(function (x) { return [x.city + (x.country ? ", " + countryName(x.country) : ""), x.visits]; })),
-      table("Countries · visits", s.topCountries.map(function (x) { return [countryName(x.country), x.visits]; })),
+      table("Cities · visits",
+        s.topCities.map(function (x) { return [x.city + (x.country ? ", " + countryName(x.country) : ""), x.visits]; }),
+        { total: fl.visits, rows: fl.cities.map(function (x) { return [x.city + (x.country ? ", " + countryName(x.country) : "") + " · " + NET[x.network], x.visits]; }) }),
+      table("Countries · visits",
+        s.topCountries.map(function (x) { return [countryName(x.country), x.visits]; }),
+        { total: fl.visits, rows: fl.countries.map(function (x) { return [countryName(x.country) + " · " + NET[x.network], x.visits]; }) }),
       table("Pages · visits", s.topPages.map(function (x) { return [x.path, x.visits]; })),
       table("Referrers · page views", s.topReferrers.map(function (x) { return [x.referrer, x.views]; }))
     );
+
+    // When the lists were last refreshed (they only change when you redeploy).
+    if (s.networkLists && s.networkLists.loaded && s.networkLists.fetchedAt) {
+      var when = new Date(s.networkLists.fetchedAt), age = Math.floor((Date.now() - when.getTime()) / 86400000);
+      var text = "VPN / datacenter lists updated " + when.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) + ".";
+      if (age > 30) text += " They are " + age + " days old; run npm run deploy to refresh.";
+      out.append(el("p", "note", text));
+    }
   }
 
   function load(site, token) {

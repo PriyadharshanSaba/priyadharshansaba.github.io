@@ -1,6 +1,7 @@
 import { createClient } from "@libsql/client";
 import { createHandler } from "./handler.ts";
 import { libsqlStore } from "./adapters/libsql.ts";
+import { loadNetworkInfo } from "./network-node.ts";
 
 const env = (k: string, fallback?: string) => {
   const v = process.env[k] ?? fallback;
@@ -17,5 +18,7 @@ export async function handlerFromEnv() {
     adminToken: env("ADMIN_TOKEN", "dev-admin"),
     salt: env("SALT", "dev-salt"),
     commentStatus: process.env.COMMENT_STATUS === "pending" ? "pending" : "visible",
+    // VPN/datacenter lists from `npm run lists`. If they're absent, views are simply stored unlabelled.
+    network: loadNetworkInfo(),
   });
 }

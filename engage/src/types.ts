@@ -17,7 +17,20 @@ export interface PageView {
   country?: string;
   city?: string;
   referrer?: string;
+  /**
+   * What kind of network the visit came from. A coarse label only: the IP itself is never stored.
+   * undefined = unknown (no classifier, or an unreadable IP, or a row from before this existed).
+   */
+  network?: "vpn" | "datacenter" | "regular";
   ts: number;
+}
+
+export interface FlaggedStats {
+  /** One per person per day on VPN or datacenter networks (included in Stats.visits). */
+  visits: number;
+  byNetwork: { vpn: number; datacenter: number };
+  cities: { city: string; country?: string; network: "vpn" | "datacenter"; visits: number }[];
+  countries: { country: string; network: "vpn" | "datacenter"; visits: number }[];
 }
 
 export interface Stats {
@@ -26,10 +39,14 @@ export interface Stats {
   /** One per person per day, however many pages they opened (sum of byDay[].visitors). */
   visits: number;
   byDay: { day: string; views: number; visitors: number }[]; // zero-filled
+  /** Regular traffic only. VPN and datacenter visits are grouped under `flagged`. */
   topCities: { city: string; country?: string; visits: number }[];
   topCountries: { country: string; visits: number }[];
   topPages: { path: string; visits: number }[];
   topReferrers: { referrer: string; views: number }[];
+  flagged: FlaggedStats;
+  /** Added by the API: whether the VPN/datacenter lists were loaded when this was computed. */
+  networkLists?: { loaded: boolean; fetchedAt?: string };
 }
 
 /** The ONLY thing storage backends implement. Swap freely. */

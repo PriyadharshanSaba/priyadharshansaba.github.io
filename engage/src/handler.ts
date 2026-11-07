@@ -1,4 +1,5 @@
 import type { Comment, Store } from "./types.ts";
+import type { Network } from "./network.ts";
 import { aggregate, windowStart } from "./stats.ts";
 
 export interface Options {
@@ -16,6 +17,14 @@ export interface Options {
   commentsPerHour?: number;
   /** Chance (0..1) that a view request also purges rows older than 90 days. Default 0.02. */
   cleanupChance?: number;
+  /** Optional VPN/datacenter classifier. Without it, views are simply stored unlabelled. */
+  network?: NetworkInfo;
+}
+
+export interface NetworkInfo {
+  /** "vpn" | "datacenter" | "regular", or null when the address is unknown. Must not store the IP. */
+  classify(ip: string | null): Network | null;
+  status(): { loaded: boolean; fetchedAt?: string };
 }
 
 const DEDUPE_MS = 15 * 60_000;           // one view per visitor per page per 15 minutes
@@ -40,10 +49,12 @@ async function hash(s: string) {
   return [...new Uint8Array(buf)].slice(0, 12).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+/** The visitor's address as the CDN reports it. Used in memory only: hashed or classified, never stored. */
+const clientIp = (req: Request) => req.headers.get("x-forwarded-for")?.split(",")[0].trim() || null;
+
 async function visitorHash(req: Request, salt: string) {
   const day = new Date().toISOString().slice(0, 10);
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "";
-  return hash(`${salt}|${day}|${ip}|${req.headers.get("user-agent") ?? ""}`);
+  return hash(`${salt}|${day}|${clientIp(req) ?? ""}|${req.headers.get("user-agent") ?? ""}`);
 }
 
 /** Edge/CDN geo headers (Vercel, Cloudflare, Netlify). No IP lookup DB needed. */
@@ -117,7 +128,11 @@ export function createHandler(opts: Options) {
         let referrer = b.referrer ? String(b.referrer).slice(0, 200) : undefined;
         try { if (referrer && origin && referrer === new URL(origin).hostname) referrer = undefined; } catch { /* bad origin header */ }
         if (!(await store.hasRecentView(site, path, visitor, now - DEDUPE_MS))) {
-          await store.addView({ site, path, visitor, ...geo(req.headers), referrer, ts: now });
+          // Label the kind of network (vpn / datacenter / regular). Only the label is kept, never the IP.
+          // A broken or missing classifier must never stop a view being counted.
+          let network: Network | undefined;
+          try { network = opts.network?.classify(clientIp(req)) ?? undefined; } catch { network = undefined; }
+          await store.addView({ site, path, visitor, ...geo(req.headers), referrer, network, ts: now });
         }
         // Retention: occasionally purge old rows so no scheduled job is needed.
         if (Math.random() < (opts.cleanupChance ?? 0.02)) {
@@ -133,7 +148,11 @@ export function createHandler(opts: Options) {
         if (!site) return json({ error: "site required" }, 400, cors);
         const days = Math.min(Number(url.searchParams.get("days") ?? opts.statsDays ?? 10), 90);
         // Load exactly the days the chart shows, from UTC midnight, so totals match the bars.
-        return json(aggregate(await store.viewsSince(site, windowStart(days)), days), 200, cors);
+        const stats = aggregate(await store.viewsSince(site, windowStart(days)), days);
+        // Lets the dashboard warn if the VPN/datacenter lists are missing from the deployment.
+        let networkLists: { loaded: boolean; fetchedAt?: string } = { loaded: false };
+        try { if (opts.network) networkLists = opts.network.status(); } catch { /* keep { loaded: false } */ }
+        return json({ ...stats, networkLists }, 200, cors);
       }
 
       if (route === "moderate" && req.method === "POST") {

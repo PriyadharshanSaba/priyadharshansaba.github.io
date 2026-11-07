@@ -1,0 +1,8 @@
+# When this file exists, Vercel uses it instead of .gitignore to decide what to upload.
+# data/ is git-ignored (third-party lists, downloaded by `npm run lists`) but MUST be uploaded.
+node_modules
+.env
+.env.*
+dev.db*
+.vercel
+test

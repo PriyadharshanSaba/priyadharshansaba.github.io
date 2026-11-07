@@ -14,13 +14,31 @@ export const SCHEMA = [
   `CREATE INDEX IF NOT EXISTS idx_comments_page ON comments(site, slug, created_at)`,
   `CREATE TABLE IF NOT EXISTS views (
      site TEXT NOT NULL, path TEXT NOT NULL, visitor TEXT NOT NULL,
-     country TEXT, city TEXT, referrer TEXT, ts INTEGER NOT NULL)`,
+     country TEXT, city TEXT, referrer TEXT, ts INTEGER NOT NULL, network TEXT)`,
   `CREATE INDEX IF NOT EXISTS idx_views_site_ts ON views(site, ts)`,
 ];
+
+/** Columns added after the first release. CREATE TABLE IF NOT EXISTS won't add them to an existing table. */
+const MIGRATIONS = [{ table: "views", column: "network", ddl: `ALTER TABLE views ADD COLUMN network TEXT` }];
+
+async function migrate(db: Db) {
+  for (const m of MIGRATIONS) {
+    const cols = (await db.execute(`PRAGMA table_info(${m.table})`)).rows.map((r) => String(r.name));
+    if (cols.includes(m.column)) continue;
+    // Two cold starts can race here; the loser gets "duplicate column", which is fine.
+    try { await db.execute(m.ddl); } catch (e) {
+      const again = (await db.execute(`PRAGMA table_info(${m.table})`)).rows.map((r) => String(r.name));
+      if (!again.includes(m.column)) throw e;
+    }
+  }
+}
+
+const NETWORKS = new Set(["vpn", "datacenter", "regular"]);
 
 /** Works with Turso (hosted), a local SQLite file (file:dev.db) or Cloudflare-style libSQL. */
 export async function libsqlStore(db: Db): Promise<Store> {
   for (const s of SCHEMA) await db.execute(s);
+  await migrate(db);
   const q = (sql: string, args: unknown[]) => db.execute({ sql, args });
   return {
     async addComment(c) {
@@ -42,8 +60,8 @@ export async function libsqlStore(db: Db): Promise<Store> {
       return Number(r.rows[0]?.n ?? 0);
     },
     async addView(v) {
-      await q(`INSERT INTO views VALUES (?,?,?,?,?,?,?)`,
-        [v.site, v.path, v.visitor, v.country ?? null, v.city ?? null, v.referrer ?? null, v.ts]);
+      await q(`INSERT INTO views (site,path,visitor,country,city,referrer,ts,network) VALUES (?,?,?,?,?,?,?,?)`,
+        [v.site, v.path, v.visitor, v.country ?? null, v.city ?? null, v.referrer ?? null, v.ts, v.network ?? null]);
     },
     async hasRecentView(site, path, visitor, since) {
       const r = await q(`SELECT 1 FROM views WHERE site=? AND path=? AND visitor=? AND ts>=? LIMIT 1`,
@@ -57,6 +75,7 @@ export async function libsqlStore(db: Db): Promise<Store> {
         site: String(x.site), path: String(x.path), visitor: String(x.visitor),
         country: (x.country as string) ?? undefined, city: (x.city as string) ?? undefined,
         referrer: (x.referrer as string) ?? undefined, ts: Number(x.ts),
+        network: NETWORKS.has(String(x.network)) ? (x.network as PageView["network"]) : undefined,
       }));
     },
   };
