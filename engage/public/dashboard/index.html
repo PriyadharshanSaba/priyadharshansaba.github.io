@@ -80,6 +80,16 @@
     c.append(t);
     return c;
   }
+  // "IN" -> "India". The browser knows country names, so no lookup table is needed.
+  var regions = null;
+  try { regions = new Intl.DisplayNames(["en"], { type: "region" }); } catch (x) {}
+  function countryName(code) {
+    if (!code || !regions) return code;
+    try {
+      var n = regions.of(String(code).toUpperCase());
+      return n && n !== String(code).toUpperCase() ? n : "Unknown";   // e.g. "XX" (unknown region)
+    } catch (x) { return "Unknown"; }                                  // e.g. "T1" (Tor)
+  }
   function render(s) {
     out.replaceChildren();
     var k = el("div", "kpis");
@@ -104,8 +114,8 @@
 
     // Cities, countries and pages count people per day (visits). Referrers count page views.
     out.append(
-      table("Cities · visits", s.topCities.map(function (x) { return [x.city + (x.country ? ", " + x.country : ""), x.visits]; })),
-      table("Countries · visits", s.topCountries.map(function (x) { return [x.country, x.visits]; })),
+      table("Cities · visits", s.topCities.map(function (x) { return [x.city + (x.country ? ", " + countryName(x.country) : ""), x.visits]; })),
+      table("Countries · visits", s.topCountries.map(function (x) { return [countryName(x.country), x.visits]; })),
       table("Pages · visits", s.topPages.map(function (x) { return [x.path, x.visits]; })),
       table("Referrers · page views", s.topReferrers.map(function (x) { return [x.referrer, x.views]; }))
     );
