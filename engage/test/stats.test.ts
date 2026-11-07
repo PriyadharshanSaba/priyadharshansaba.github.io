@@ -54,3 +54,45 @@ test("/stats loads exactly the chart's window (no partial extra day)", async () 
   assert.equal(s.totalViews, 1);
   assert.equal(s.topPages[0].path, "/new/");
 });
+
+// ---- cities, countries and pages count people per day, not page views ----
+const at = (visitor: string, path: string, ts: number, city = "Bengaluru", country = "IN", referrer?: string): PageView =>
+  ({ site: "s", path, visitor, ts, city, country, referrer });
+
+test("a person opening the same page twice in a day counts once for that page", () => {
+  const s = aggregate([at("a", "/india/", NOW), at("a", "/india/", NOW + 20 * 60_000)], 10, NOW + 3600_000);
+  assert.equal(s.topPages[0].path, "/india/");
+  assert.equal(s.topPages[0].visits, 1);
+  assert.equal(s.totalViews, 2); // page views still count both
+});
+
+test("a person opening 3 pages counts once in their city and country, once on each page", () => {
+  const s = aggregate([at("a", "/", NOW), at("a", "/india/", NOW), at("a", "/pooram/", NOW)], 10, NOW);
+  assert.deepEqual(s.topCities.map((c) => [c.city, c.visits]), [["Bengaluru", 1]]);
+  assert.deepEqual(s.topCountries.map((c) => [c.country, c.visits]), [["IN", 1]]);
+  assert.deepEqual(s.topPages.map((p) => p.visits), [1, 1, 1]);
+});
+
+test("different people in the same city and page add up", () => {
+  const s = aggregate([at("a", "/india/", NOW), at("b", "/india/", NOW), at("c", "/india/", NOW, "Mumbai")], 10, NOW);
+  assert.deepEqual(s.topCities.map((c) => [c.city, c.visits]), [["Bengaluru", 2], ["Mumbai", 1]]);
+  assert.equal(s.topPages[0].visits, 3);
+});
+
+test("the same person on two different days counts once per day", () => {
+  const s = aggregate([at("a-mon", "/india/", NOW - DAY), at("a-tue", "/india/", NOW)], 10, NOW);
+  assert.equal(s.topPages[0].visits, 2);
+  assert.equal(s.topCities[0].visits, 2);
+});
+
+test("a city's visits never exceed the total visits", () => {
+  const s = aggregate([at("a", "/", NOW), at("b", "/", NOW), at("a", "/india/", NOW)], 10, NOW);
+  assert.ok(s.topCities[0].visits <= s.visits);
+  assert.equal(s.topCities[0].visits, 2);
+  assert.equal(s.visits, 2);
+});
+
+test("referrers still count page views", () => {
+  const s = aggregate([at("a", "/", NOW, "Bengaluru", "IN", "instagram.com"), at("a", "/india/", NOW, "Bengaluru", "IN", "instagram.com")], 10, NOW);
+  assert.equal(s.topReferrers[0].views, 2);
+});

@@ -9,6 +9,18 @@ function top<T>(items: T[], key: (t: T) => string | undefined, n = 10) {
   return [...m].sort((a, b) => b[1] - a[1]).slice(0, n);
 }
 
+/** Like top(), but counts distinct people per day: one person = one count per item per day. */
+function topPeople(items: PageView[], key: (v: PageView) => string | undefined, n = 10) {
+  const m = new Map<string, Set<string>>();
+  for (const v of items) {
+    const k = key(v);
+    if (!k) continue;
+    if (!m.has(k)) m.set(k, new Set());
+    m.get(k)!.add(`${v.visitor}|${dayKey(v.ts)}`);
+  }
+  return [...m].map(([k, s]) => [k, s.size] as [string, number]).sort((a, b) => b[1] - a[1]).slice(0, n);
+}
+
 /** UTC midnight at the start of the oldest day shown (the chart's first bar). */
 export const windowStart = (days: number, now = Date.now()) =>
   Date.UTC(new Date(now).getUTCFullYear(), new Date(now).getUTCMonth(), new Date(now).getUTCDate()) - (days - 1) * DAY;
@@ -36,9 +48,10 @@ export function aggregate(allViews: PageView[], days: number, now = Date.now()):
     totalViews: views.length,
     visits: byDay.reduce((n, d) => n + d.visitors, 0),
     byDay,
-    topCities: top(views, (v) => v.city).map(([city, n]) => ({ city, country: cityOf.get(city), views: n })),
-    topCountries: top(views, (v) => v.country).map(([country, views]) => ({ country, views })),
-    topPages: top(views, (v) => v.path).map(([path, views]) => ({ path, views })),
+    // Cities, countries and pages count people per day (visits). Referrers still count page views.
+    topCities: topPeople(views, (v) => v.city).map(([city, n]) => ({ city, country: cityOf.get(city), visits: n })),
+    topCountries: topPeople(views, (v) => v.country).map(([country, visits]) => ({ country, visits })),
+    topPages: topPeople(views, (v) => v.path).map(([path, visits]) => ({ path, visits })),
     topReferrers: top(views, (v) => v.referrer).map(([referrer, views]) => ({ referrer, views })),
   };
 }

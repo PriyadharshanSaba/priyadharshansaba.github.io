@@ -102,11 +102,11 @@
     c.append(bars, days, el("p", "note", s.byDay[0].day + " to " + s.byDay[s.byDay.length - 1].day + " (UTC). Peak: " + max + " visits/day. Hover a bar for page views."));
     out.append(c);
 
-    // The tables below count page views (every page opened).
+    // Cities, countries and pages count people per day (visits). Referrers count page views.
     out.append(
-      table("Cities · page views", s.topCities.map(function (x) { return [x.city + (x.country ? ", " + x.country : ""), x.views]; })),
-      table("Countries · page views", s.topCountries.map(function (x) { return [x.country, x.views]; })),
-      table("Pages · page views", s.topPages.map(function (x) { return [x.path, x.views]; })),
+      table("Cities · visits", s.topCities.map(function (x) { return [x.city + (x.country ? ", " + x.country : ""), x.visits]; })),
+      table("Countries · visits", s.topCountries.map(function (x) { return [x.country, x.visits]; })),
+      table("Pages · visits", s.topPages.map(function (x) { return [x.path, x.visits]; })),
       table("Referrers · page views", s.topReferrers.map(function (x) { return [x.referrer, x.views]; }))
     );
   }
