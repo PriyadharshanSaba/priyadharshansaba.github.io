@@ -27,7 +27,16 @@ Counting rules (all in `src/handler.ts`):
 
 ## Dashboard
 Open `https://<api-host>/dashboard`, enter the site name (`github-io`) and the admin token.
-Shows views, approximate visitors, a 10-day chart, and top cities, countries, pages and referrers.
+Two headline numbers:
+- **Visits**: one per person per day, however many pages they open. The 10-day chart plots this.
+- **Page views**: every page opened (deduped to one per page per 15 minutes).
+
+The **cities, countries and pages** tables count visits too: a person counts once per item per day (so someone
+opening 3 pages counts once in their city and on each of those 3 pages). The **referrers** table counts page
+views. Totals are computed only from the
+days shown in the chart (UTC days, today included), so the headline numbers always match the bars.
+A "person" is approximate: the visitor code is IP + browser type + date, so the same person on another
+day or device counts again, and people sharing a network and device type can merge.
 
 ## Local development
 `npm run dev` serves the API at `http://localhost:8787/api`, plus `/track.js` and `/dashboard` from `public/`.

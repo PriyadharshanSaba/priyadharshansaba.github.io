@@ -80,32 +80,44 @@
     c.append(t);
     return c;
   }
+  // "IN" -> "India". The browser knows country names, so no lookup table is needed.
+  var regions = null;
+  try { regions = new Intl.DisplayNames(["en"], { type: "region" }); } catch (x) {}
+  function countryName(code) {
+    if (!code || !regions) return code;
+    try {
+      var n = regions.of(String(code).toUpperCase());
+      return n && n !== String(code).toUpperCase() ? n : "Unknown";   // e.g. "XX" (unknown region)
+    } catch (x) { return "Unknown"; }                                  // e.g. "T1" (Tor)
+  }
   function render(s) {
     out.replaceChildren();
     var k = el("div", "kpis");
-    [[s.totalViews, "views"], [s.uniqueVisitors, "visitors (approx.)"]].forEach(function (x) {
+    [[s.visits, "visits (one per person per day)"], [s.totalViews, "page views (every page opened)"]].forEach(function (x) {
       var d = el("div", "card kpi"); d.append(el("b", "", String(x[0])), el("span", "", x[1])); k.append(d);
     });
     out.append(k);
 
-    var max = Math.max(1, Math.max.apply(null, s.byDay.map(function (d) { return d.views; })));
-    var c = card("Views per day"), bars = el("div", "bars"), days = el("div", "days");
+    // The chart counts people: one visit per person per day, whatever number of pages they open.
+    var max = Math.max(1, Math.max.apply(null, s.byDay.map(function (d) { return d.visitors; })));
+    var c = card("Visits per day"), bars = el("div", "bars"), days = el("div", "days");
     bars.setAttribute("role", "img");
-    bars.setAttribute("aria-label", "Views per day: " + s.byDay.map(function (d) { return d.day + " " + d.views; }).join(", "));
+    bars.setAttribute("aria-label", "Visits per day: " + s.byDay.map(function (d) { return d.day + " " + d.visitors; }).join(", "));
     s.byDay.forEach(function (d) {
-      var b = el("div", "bar"); b.style.height = (d.views / max * 100) + "%";
-      b.title = d.day + ": " + d.views + " views, " + d.visitors + " visitors";
+      var b = el("div", "bar"); b.style.height = (d.visitors / max * 100) + "%";
+      b.title = d.day + ": " + d.visitors + " visits, " + d.views + " page views";
       bars.append(b);
       days.append(el("span", "", String(Number(d.day.slice(8)))));
     });
-    c.append(bars, days, el("p", "note", s.byDay[0].day + " to " + s.byDay[s.byDay.length - 1].day + " (UTC). Peak: " + max + " views/day."));
+    c.append(bars, days, el("p", "note", s.byDay[0].day + " to " + s.byDay[s.byDay.length - 1].day + " (UTC). Peak: " + max + " visits/day. Hover a bar for page views."));
     out.append(c);
 
+    // Cities, countries and pages count people per day (visits). Referrers count page views.
     out.append(
-      table("Cities", s.topCities.map(function (x) { return [x.city + (x.country ? ", " + x.country : ""), x.views]; })),
-      table("Countries", s.topCountries.map(function (x) { return [x.country, x.views]; })),
-      table("Pages", s.topPages.map(function (x) { return [x.path, x.views]; })),
-      table("Referrers", s.topReferrers.map(function (x) { return [x.referrer, x.views]; }))
+      table("Cities · visits", s.topCities.map(function (x) { return [x.city + (x.country ? ", " + countryName(x.country) : ""), x.visits]; })),
+      table("Countries · visits", s.topCountries.map(function (x) { return [countryName(x.country), x.visits]; })),
+      table("Pages · visits", s.topPages.map(function (x) { return [x.path, x.visits]; })),
+      table("Referrers · page views", s.topReferrers.map(function (x) { return [x.referrer, x.views]; }))
     );
   }
 

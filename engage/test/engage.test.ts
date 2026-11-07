@@ -29,6 +29,6 @@ test("views -> 10-day stats with city, admin only", async () => {
   const s = await (await call("stats?site=photo", { headers: { authorization: "Bearer t" } })).json();
   assert.equal(s.byDay.length, 10);
   assert.equal(s.totalViews, 2);
-  assert.equal(s.uniqueVisitors, 2);
+  assert.equal(s.visits, 2);
   assert.equal(s.topCities[0].city, "Bengaluru");
 });

@@ -23,11 +23,12 @@ export interface PageView {
 export interface Stats {
   days: number;
   totalViews: number;
-  uniqueVisitors: number;
+  /** One per person per day, however many pages they opened (sum of byDay[].visitors). */
+  visits: number;
   byDay: { day: string; views: number; visitors: number }[]; // zero-filled
-  topCities: { city: string; country?: string; views: number }[];
-  topCountries: { country: string; views: number }[];
-  topPages: { path: string; views: number }[];
+  topCities: { city: string; country?: string; visits: number }[];
+  topCountries: { country: string; visits: number }[];
+  topPages: { path: string; visits: number }[];
   topReferrers: { referrer: string; views: number }[];
 }
 

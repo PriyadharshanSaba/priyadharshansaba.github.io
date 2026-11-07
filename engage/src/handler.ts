@@ -1,5 +1,5 @@
 import type { Comment, Store } from "./types.ts";
-import { aggregate } from "./stats.ts";
+import { aggregate, windowStart } from "./stats.ts";
 
 export interface Options {
   store: Store;
@@ -132,7 +132,8 @@ export function createHandler(opts: Options) {
         const site = url.searchParams.get("site");
         if (!site) return json({ error: "site required" }, 400, cors);
         const days = Math.min(Number(url.searchParams.get("days") ?? opts.statsDays ?? 10), 90);
-        return json(aggregate(await store.viewsSince(site, Date.now() - days * 86_400_000), days), 200, cors);
+        // Load exactly the days the chart shows, from UTC midnight, so totals match the bars.
+        return json(aggregate(await store.viewsSince(site, windowStart(days)), days), 200, cors);
       }
 
       if (route === "moderate" && req.method === "POST") {
