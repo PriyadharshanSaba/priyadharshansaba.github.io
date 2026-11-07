@@ -96,15 +96,16 @@
     c.append(rowsTable(rows, "No data yet"));
     if (flagged && flagged.rows.length) {
       var d = el("details", "flagged"), sm = el("summary");
-      sm.append(el("span", "", "VPN / datacenter"), el("b", "", flagged.total + (flagged.total === 1 ? " visit" : " visits")));
+      sm.append(el("span", "", FLAGGED), el("b", "", flagged.total + (flagged.total === 1 ? " visit" : " visits")));
       d.append(sm,
-        el("p", "hint", "Likely bots, scanners, cloud servers or VPN users. Not counted in the list above."),
+        el("p", "hint", "The place shown here is probably not where the visitor is: VPNs, cloud servers and bots, or a browser timezone that doesn't match the IP's country. Not counted in the list above."),
         rowsTable(flagged.rows));
       c.append(d);
     }
     return c;
   }
-  var NET = { vpn: "VPN", datacenter: "Datacenter" };
+  var NET = { vpn: "VPN", datacenter: "Datacenter", timezone: "Timezone mismatch" };
+  var FLAGGED = "VPN / datacenter / timezone mismatch";
   // "IN" -> "India". The browser knows country names, so no lookup table is needed.
   var regions = null;
   try { regions = new Intl.DisplayNames(["en"], { type: "region" }); } catch (x) {}
@@ -119,10 +120,10 @@
     out.replaceChildren();
     var fl = s.flagged || { visits: 0, cities: [], countries: [] };
     if (s.networkLists && !s.networkLists.loaded) {
-      out.append(el("p", "warn", "The VPN / datacenter lists aren't loaded on the server, so no traffic is being grouped yet."));
+      out.append(el("p", "warn", "The VPN / datacenter lists aren't loaded on the server, so only the timezone check is grouping traffic."));
     }
     var k = el("div", "kpis");
-    [[s.visits, "visits (one per person per day)", fl.visits ? "includes " + fl.visits + " from VPN / datacenter" : ""],
+    [[s.visits, "visits (one per person per day)", fl.visits ? "includes " + fl.visits + " flagged (VPN / datacenter / timezone mismatch)" : ""],
      [s.totalViews, "page views (every page opened)", ""]].forEach(function (x) {
       var d = el("div", "card kpi"); d.append(el("b", "", String(x[0])), el("span", "", x[1]));
       if (x[2]) d.append(el("span", "extra", x[2]));

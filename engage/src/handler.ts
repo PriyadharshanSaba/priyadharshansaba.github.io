@@ -1,5 +1,6 @@
-import type { Comment, Store } from "./types.ts";
+import type { Comment, NetworkLabel, Store } from "./types.ts";
 import type { Network } from "./network.ts";
+import { timezoneMatchesCountry } from "./timezone-check.ts";
 import { aggregate, windowStart } from "./stats.ts";
 
 export interface Options {
@@ -130,9 +131,16 @@ export function createHandler(opts: Options) {
         if (!(await store.hasRecentView(site, path, visitor, now - DEDUPE_MS))) {
           // Label the kind of network (vpn / datacenter / regular). Only the label is kept, never the IP.
           // A broken or missing classifier must never stop a view being counted.
-          let network: Network | undefined;
+          const where = geo(req.headers);
+          let network: NetworkLabel | undefined;
           try { network = opts.network?.classify(clientIp(req)) ?? undefined; } catch { network = undefined; }
-          await store.addView({ site, path, visitor, ...geo(req.headers), referrer, network, ts: now });
+          // An unlisted (or unknown) IP whose browser timezone belongs to another country is a hint of a VPN,
+          // proxy or bot. The timezone is compared and discarded; it is never stored.
+          const tz = typeof b.tz === "string" ? b.tz.slice(0, 64) : undefined;
+          if ((network === undefined || network === "regular") && timezoneMatchesCountry(tz, where.country) === false) {
+            network = "timezone";
+          }
+          await store.addView({ site, path, visitor, ...where, referrer, network, ts: now });
         }
         // Retention: occasionally purge old rows so no scheduled job is needed.
         if (Math.random() < (opts.cleanupChance ?? 0.02)) {

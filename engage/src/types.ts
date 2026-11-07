@@ -10,6 +10,13 @@ export interface Comment {
   ipHash?: string;
 }
 
+/**
+ * vpn / datacenter: IP is on the X4BNet lists. timezone: IP looks regular but the browser's timezone belongs to a
+ * different country than the IP's. regular: neither. Only this label is stored, never the IP or the timezone.
+ */
+export type NetworkLabel = "vpn" | "datacenter" | "timezone" | "regular";
+export type FlaggedLabel = Exclude<NetworkLabel, "regular">;
+
 export interface PageView {
   site: string;
   path: string;
@@ -21,16 +28,16 @@ export interface PageView {
    * What kind of network the visit came from. A coarse label only: the IP itself is never stored.
    * undefined = unknown (no classifier, or an unreadable IP, or a row from before this existed).
    */
-  network?: "vpn" | "datacenter" | "regular";
+  network?: NetworkLabel;
   ts: number;
 }
 
 export interface FlaggedStats {
-  /** One per person per day on VPN or datacenter networks (included in Stats.visits). */
+  /** One per person per day on VPN/datacenter networks or with a timezone mismatch (included in Stats.visits). */
   visits: number;
-  byNetwork: { vpn: number; datacenter: number };
-  cities: { city: string; country?: string; network: "vpn" | "datacenter"; visits: number }[];
-  countries: { country: string; network: "vpn" | "datacenter"; visits: number }[];
+  byNetwork: { vpn: number; datacenter: number; timezone: number };
+  cities: { city: string; country?: string; network: FlaggedLabel; visits: number }[];
+  countries: { country: string; network: FlaggedLabel; visits: number }[];
 }
 
 export interface Stats {

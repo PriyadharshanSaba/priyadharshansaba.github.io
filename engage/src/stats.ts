@@ -1,9 +1,8 @@
-import type { PageView, Stats } from "./types.ts";
+import type { FlaggedLabel, PageView, Stats } from "./types.ts";
 
 const DAY = 86_400_000;
 const SEP = "\t"; // separator inside composite keys (never appears in a city or country name)
-type FlaggedNetwork = "vpn" | "datacenter";
-const isFlagged = (v: PageView) => v.network === "vpn" || v.network === "datacenter";
+const isFlagged = (v: PageView) => v.network === "vpn" || v.network === "datacenter" || v.network === "timezone";
 export const dayKey = (ts: number) => new Date(ts).toISOString().slice(0, 10);
 
 function top<T>(items: T[], key: (t: T) => string | undefined, n = 10) {
@@ -55,7 +54,7 @@ export function aggregate(allViews: PageView[], days: number, now = Date.now()):
 
   const byDay = [...byDayMap].map(([day, d]) => ({ day, views: d.views, visitors: d.v.size }));
   const peopleOf = (items: PageView[]) => new Set(items.map((v) => `${v.visitor}|${dayKey(v.ts)}`)).size;
-  const split = (key: string) => key.split(SEP) as [FlaggedNetwork, string];
+  const split = (key: string) => key.split(SEP) as [FlaggedLabel, string];
 
   return {
     days,
@@ -72,6 +71,7 @@ export function aggregate(allViews: PageView[], days: number, now = Date.now()):
       byNetwork: {
         vpn: peopleOf(flaggedViews.filter((v) => v.network === "vpn")),
         datacenter: peopleOf(flaggedViews.filter((v) => v.network === "datacenter")),
+        timezone: peopleOf(flaggedViews.filter((v) => v.network === "timezone")),
       },
       cities: topPeople(flaggedViews, (v) => (v.city ? `${v.network}${SEP}${v.city}` : undefined), 20).map(([key, visits]) => {
         const [network, city] = split(key);

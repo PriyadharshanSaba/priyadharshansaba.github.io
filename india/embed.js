@@ -9,7 +9,10 @@
   var post = function (p, b) {
     return fetch(api + p, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(b) });
   };
-  post("/view", { site: site, path: location.pathname, referrer: document.referrer ? new URL(document.referrer).hostname : "" }).catch(function () {});
+  // Browser timezone name: compared with the IP's country on the server to spot VPNs/bots, then discarded (not stored).
+  var tz = "";
+  try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) {}
+  post("/view", { site: site, path: location.pathname, referrer: document.referrer ? new URL(document.referrer).hostname : "", tz: tz }).catch(function () {});
 
   var root = document.querySelector(d.target || "#comments");
   if (!root) return;

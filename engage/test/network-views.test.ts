@@ -96,7 +96,7 @@ test("flagged views are excluded from the city and country lists but counted in 
   assert.deepEqual(s.topCountries.map((c) => c.country), ["IN"]);
   assert.equal(s.visits, 3);
   assert.equal(s.flagged.visits, 2);
-  assert.deepEqual(s.flagged.byNetwork, { vpn: 1, datacenter: 1 });
+  assert.deepEqual(s.flagged.byNetwork, { vpn: 1, datacenter: 1, timezone: 0 });
 });
 
 test("flagged lists carry the network type and per-person-per-day counts", () => {
