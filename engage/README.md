@@ -31,6 +31,12 @@ Two headline numbers:
 - **Visits**: one per person per day, however many pages they open. The 10-day chart plots this.
 - **Page views**: every page opened (deduped to one per page per 15 minutes).
 
+**Click a bar** in the chart to expand that day's countries underneath (full country names, one count per person,
+adding up to the bar; people from VPN/datacenter/timezone-mismatch networks are noted as "N flagged"). Click the same
+bar again, click anywhere outside the chart card, or press Escape to collapse it; clicking another bar switches day.
+Bars are real buttons, so this works with a keyboard and screen readers. The data comes from `byDay[].countries`
+in `/api/stats` (`XX` = unknown country; unknown codes are shown together as "Unknown").
+
 The **cities, countries and pages** tables count visits too: a person counts once per item per day (so someone
 opening 3 pages counts once in their city and on each of those 3 pages). The **referrers** table counts page
 views. Totals are computed only from the

@@ -32,6 +32,12 @@ export interface PageView {
   ts: number;
 }
 
+export interface DayCountry {
+  country: string;   // ISO code, or "XX" when the country is unknown
+  visits: number;    // people from this country that day
+  flagged: number;   // of those, how many were VPN / datacenter / timezone-mismatch
+}
+
 export interface FlaggedStats {
   /** One per person per day on VPN/datacenter networks or with a timezone mismatch (included in Stats.visits). */
   visits: number;
@@ -45,7 +51,8 @@ export interface Stats {
   totalViews: number;
   /** One per person per day, however many pages they opened (sum of byDay[].visitors). */
   visits: number;
-  byDay: { day: string; views: number; visitors: number }[]; // zero-filled
+  /** Zero-filled. `countries` = who came that day: one count per person, adding up to `visitors`. XX = unknown. */
+  byDay: { day: string; views: number; visitors: number; countries: DayCountry[] }[];
   /** Regular traffic only. VPN and datacenter visits are grouped under `flagged`. */
   topCities: { city: string; country?: string; visits: number }[];
   topCountries: { country: string; visits: number }[];

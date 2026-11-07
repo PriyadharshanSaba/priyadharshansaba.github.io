@@ -35,12 +35,18 @@ export const windowStart = (days: number, now = Date.now()) =>
  * Everything is computed from the days shown in the chart, so totals always match the bars.
  */
 export function aggregate(allViews: PageView[], days: number, now = Date.now()): Stats {
-  const byDayMap = new Map<string, { views: number; v: Set<string> }>();
-  for (let i = days - 1; i >= 0; i--) byDayMap.set(dayKey(now - i * DAY), { views: 0, v: new Set() });
+  // Per day: page views, and the people (visitor codes) who came, each with ONE country and a flagged marker.
+  type Person = { country?: string; flagged: boolean };
+  const byDayMap = new Map<string, { views: number; people: Map<string, Person> }>();
+  for (let i = days - 1; i >= 0; i--) byDayMap.set(dayKey(now - i * DAY), { views: 0, people: new Map() });
   const views = allViews.filter((v) => byDayMap.has(dayKey(v.ts)));
   for (const v of views) {
     const d = byDayMap.get(dayKey(v.ts))!;
-    d.views++; d.v.add(v.visitor);
+    d.views++;
+    let p = d.people.get(v.visitor);
+    if (!p) { p = { flagged: false }; d.people.set(v.visitor, p); }
+    if (!p.country && v.country) p.country = v.country;   // first known country wins, so nobody is counted twice
+    if (isFlagged(v)) p.flagged = true;                    // flagged if ANY of their views was
   }
   // VPN and datacenter traffic (which includes most bots that fake a normal user-agent) is kept out of
   // the city/country lists and grouped separately. Unlabelled rows (old data) count as regular.
@@ -52,7 +58,20 @@ export function aggregate(allViews: PageView[], days: number, now = Date.now()):
   const flaggedCityCountry = new Map<string, string | undefined>();
   for (const v of flaggedViews) if (v.city) flaggedCityCountry.set(`${v.network}${SEP}${v.city}`, v.country);
 
-  const byDay = [...byDayMap].map(([day, d]) => ({ day, views: d.views, visitors: d.v.size }));
+  const byDay = [...byDayMap].map(([day, d]) => {
+    // Countries that day, one count per person, so they always add up to the bar (visitors).
+    const tally = new Map<string, { visits: number; flagged: number }>();
+    for (const p of d.people.values()) {
+      const country = p.country ?? "XX";                   // XX = unknown, so nobody goes missing
+      const t = tally.get(country) ?? { visits: 0, flagged: 0 };
+      t.visits++; if (p.flagged) t.flagged++;
+      tally.set(country, t);
+    }
+    const countries = [...tally]
+      .map(([country, t]) => ({ country, visits: t.visits, flagged: t.flagged }))
+      .sort((a, b) => b.visits - a.visits || a.country.localeCompare(b.country));
+    return { day, views: d.views, visitors: d.people.size, countries };
+  });
   const peopleOf = (items: PageView[]) => new Set(items.map((v) => `${v.visitor}|${dayKey(v.ts)}`)).size;
   const split = (key: string) => key.split(SEP) as [FlaggedLabel, string];
 

@@ -7,11 +7,11 @@
 <title>Visitors · last 10 days</title>
 <style>
   :root {
-    --bg: #f5f2ec; --card: #fffdf8; --ink: #1a1a1a; --muted: #6b6b6b; --rule: #d9d4ca; --bar: #3b6ea5; --bar-hi: #1f4f86;
+    --bg: #f5f2ec; --card: #fffdf8; --ink: #1a1a1a; --muted: #6b6b6b; --rule: #d9d4ca; --bar: #3b6ea5; --bar-hi: #1f4f86; --hl: rgba(59, 110, 165, .12);
     --sans: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
   }
   @media (prefers-color-scheme: dark) {
-    :root { --bg: #0e1110; --card: #161a18; --ink: #e9e5dc; --muted: #9b9b92; --rule: #2b2e2b; --bar: #6fa2d6; --bar-hi: #9cc3ea; }
+    :root { --bg: #0e1110; --card: #161a18; --ink: #e9e5dc; --muted: #9b9b92; --rule: #2b2e2b; --bar: #6fa2d6; --bar-hi: #9cc3ea; --hl: rgba(111, 162, 214, .16); }
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--sans); }
@@ -28,11 +28,26 @@
   .kpi { margin: 0; }
   .kpi b { display: block; font-size: 2rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
   .kpi span { color: var(--muted); font-size: .85rem; }
-  .bars { display: flex; align-items: flex-end; gap: 4px; height: 130px; }
-  .bar { flex: 1; min-width: 0; background: var(--bar); border-radius: 3px 3px 0 0; min-height: 2px; }
-  .bar:hover, .bar:focus { background: var(--bar-hi); outline: none; }
+  /* Each day is a full-height button (a big tap target); .fill is the visible bar inside it. */
+  .bars { display: flex; align-items: stretch; gap: 4px; height: 130px; }
+  .col { flex: 1; min-width: 0; min-height: 0; padding: 0; border: 0; border-radius: 4px; background: transparent; color: inherit; display: flex; align-items: flex-end; cursor: pointer; }
+  .col .fill { width: 100%; background: var(--bar); border-radius: 3px 3px 0 0; min-height: 2px; }
+  .col:hover { background: var(--hl); }
+  .col:hover .fill, .col[aria-expanded="true"] .fill { background: var(--bar-hi); }
+  .col[aria-expanded="true"] { background: var(--hl); }
+  .col:focus-visible { outline: 2px solid var(--bar-hi); outline-offset: 1px; }
   .days { display: flex; gap: 4px; margin-top: 4px; }
   .days span { flex: 1; text-align: center; font-size: .7rem; color: var(--muted); }
+  .days span.sel { color: var(--ink); font-weight: 600; }
+  /* The expanding panel: animates its height by growing a grid row from 0fr to 1fr. */
+  .daypanel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .2s ease; }
+  .daypanel.open { grid-template-rows: 1fr; }
+  .daypanel .inner { overflow: hidden; min-height: 0; visibility: hidden; transition: visibility 0s .2s; }
+  .daypanel.open .inner { visibility: visible; transition-delay: 0s; }
+  .daypanel .body { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--rule); }
+  .daypanel .dayhead { margin: 0 0 6px; font-size: .9rem; font-weight: 600; }
+  .daypanel .muted { color: var(--muted); font-size: .8rem; }
+  @media (prefers-reduced-motion: reduce) { .daypanel, .daypanel .inner { transition: none; } }
   .note { color: var(--muted); font-size: .8rem; margin: .6rem 0 0; }
   table { width: 100%; border-collapse: collapse; }
   td { padding: 6px 0; border-top: 1px solid var(--rule); font-size: .95rem; overflow-wrap: anywhere; }
@@ -47,7 +62,8 @@
   details.flagged summary::before { content: "\25B8"; font-size: .8rem; }
   details.flagged[open] summary::before { content: "\25BE"; }
   details.flagged[open] summary { color: var(--ink); }
-  details.flagged summary b { margin-left: auto; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+  details.flagged summary span { flex: 1; min-width: 0; }
+  details.flagged summary b { margin-left: auto; flex: none; white-space: nowrap; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
   details.flagged .hint { color: var(--muted); font-size: .8rem; margin: 0 0 6px; }
   details.flagged summary:focus-visible { outline: 2px solid var(--bar); outline-offset: 2px; }
   #msg { color: #b3261e; margin: 0 0 12px; min-height: 1.5em; }
@@ -116,6 +132,60 @@
       return n && n !== String(code).toUpperCase() ? n : "Unknown";   // e.g. "XX" (unknown region)
     } catch (x) { return "Unknown"; }                                  // e.g. "T1" (Tor)
   }
+  function plural(n, word) { return n + " " + word + (n === 1 ? "" : "s"); }
+  function fmtDay(iso) {
+    try { return new Date(iso + "T00:00:00Z").toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" }); }
+    catch (x) { return iso; }
+  }
+
+  // Contents of the expanded panel for one day: who came, one count per person.
+  function dayBody(d) {
+    var body = el("div", "body");
+    body.append(el("p", "dayhead", fmtDay(d.day) + " (UTC) · " + plural(d.visitors, "visit") + " · " + plural(d.views, "page view")));
+    if (!d.countries) {
+      body.append(el("p", "note", "Country breakdown isn't available from the server yet. Redeploy the API to get it."));
+    } else if (!d.visitors) {
+      body.append(el("p", "note", "No visits this day."));
+    } else {
+      // Unknown codes (XX, T1) share the display name "Unknown", so merge them into a single row.
+      var byName = {};
+      d.countries.forEach(function (c) {
+        var name = countryName(c.country) || "Unknown";
+        var r = byName[name] || (byName[name] = { name: name, visits: 0, flagged: 0 });
+        r.visits += c.visits; r.flagged += c.flagged || 0;
+      });
+      var rows = Object.keys(byName).map(function (k) { return byName[k]; })
+        .sort(function (a, b) { return b.visits - a.visits || (a.name < b.name ? -1 : 1); });
+      var t = el("table");
+      rows.forEach(function (r) {
+        var tr = el("tr"), label = el("td", "", r.name);
+        if (r.flagged) label.append(el("span", "muted", " · " + r.flagged + " flagged"));
+        tr.append(label, el("td", "n", String(r.visits)));
+        t.append(tr);
+      });
+      body.append(t);
+    }
+    return body;
+  }
+
+  // Which day (if any) is expanded. Reset on every render; document listeners are added once.
+  var openIdx = -1, cols = [], labels = [], dayList = [], panel = null, panelInner = null, chartCard = null;
+  function setOpen(i) {
+    openIdx = i;
+    cols.forEach(function (b, j) { b.setAttribute("aria-expanded", j === i ? "true" : "false"); });
+    labels.forEach(function (l, j) { j === i ? l.classList.add("sel") : l.classList.remove("sel"); });
+    if (!panel) return;
+    if (i < 0) { panel.classList.remove("open"); return; }
+    panelInner.replaceChildren(dayBody(dayList[i]));
+    panel.classList.add("open");
+  }
+  document.addEventListener("click", function (e) {            // a click anywhere outside the chart card collapses it
+    if (openIdx >= 0 && chartCard && !chartCard.contains(e.target)) setOpen(-1);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && openIdx >= 0) setOpen(-1);
+  });
+
   function render(s) {
     out.replaceChildren();
     var fl = s.flagged || { visits: 0, cities: [], countries: [] };
@@ -134,15 +204,30 @@
     // The chart counts people: one visit per person per day, whatever number of pages they open.
     var max = Math.max(1, Math.max.apply(null, s.byDay.map(function (d) { return d.visitors; })));
     var c = card("Visits per day"), bars = el("div", "bars"), days = el("div", "days");
-    bars.setAttribute("role", "img");
-    bars.setAttribute("aria-label", "Visits per day: " + s.byDay.map(function (d) { return d.day + " " + d.visitors; }).join(", "));
-    s.byDay.forEach(function (d) {
-      var b = el("div", "bar"); b.style.height = (d.visitors / max * 100) + "%";
+    bars.setAttribute("role", "group");
+    bars.setAttribute("aria-label", "Visits per day. Select a day to see which countries visited.");
+    chartCard = c; dayList = s.byDay; cols = []; labels = []; openIdx = -1;
+    s.byDay.forEach(function (d, i) {
+      var b = el("button", "col"), fill = el("div", "fill");
+      fill.style.height = (d.visitors / max * 100) + "%";
+      b.append(fill);
+      b.setAttribute("type", "button");
+      b.setAttribute("aria-expanded", "false");
+      b.setAttribute("aria-controls", "daypanel");
+      b.setAttribute("aria-label", fmtDay(d.day) + ": " + plural(d.visitors, "visit"));
       b.title = d.day + ": " + d.visitors + " visits, " + d.views + " page views";
-      bars.append(b);
-      days.append(el("span", "", String(Number(d.day.slice(8)))));
+      b.addEventListener("click", function () { setOpen(openIdx === i ? -1 : i); });   // same bar again collapses
+      bars.append(b); cols.push(b);
+      var label = el("span", "", String(Number(d.day.slice(8))));
+      days.append(label); labels.push(label);
     });
-    c.append(bars, days, el("p", "note", s.byDay[0].day + " to " + s.byDay[s.byDay.length - 1].day + " (UTC). Peak: " + max + " visits/day. Hover a bar for page views."));
+    panelInner = el("div", "inner");
+    panel = el("div", "daypanel");
+    panel.setAttribute("id", "daypanel");
+    panel.setAttribute("role", "region");
+    panel.setAttribute("aria-label", "Countries for the selected day");
+    panel.append(panelInner);
+    c.append(bars, days, panel, el("p", "note", s.byDay[0].day + " to " + s.byDay[s.byDay.length - 1].day + " (UTC). Peak: " + max + " visits/day. Tap a bar to see which countries visited that day."));
     out.append(c);
 
     // Cities, countries and pages count people per day (visits). Referrers count page views.
