@@ -7,6 +7,7 @@ import { NetworkClassifier, parseCidrList } from "./network.ts";
 const FILES = {
   vpn4: "vpn-ipv4.txt", vpn6: "vpn-ipv6.txt",
   dc4: "datacenter-ipv4.txt", dc6: "datacenter-ipv6.txt",
+  relay4: "relay-ipv4.txt", relay6: "relay-ipv6.txt", // optional: without them Private Relay users look like VPN
 } as const;
 
 /**
@@ -23,13 +24,17 @@ type Loaded = { classifier: NetworkClassifier; fetchedAt?: string } | null;
 function tryLoad(dir: string, minEntries: number): Loaded {
   try {
     const read = (name: string) => parseCidrList(readFileSync(join(dir, name), "utf8"));
-    const lists = { vpn4: read(FILES.vpn4), vpn6: read(FILES.vpn6), dc4: read(FILES.dc4), dc6: read(FILES.dc6) };
+    const readOptional = (name: string) => { try { return read(name); } catch { return []; } };
+    const lists = {
+      vpn4: read(FILES.vpn4), vpn6: read(FILES.vpn6), dc4: read(FILES.dc4), dc6: read(FILES.dc6),
+      relay4: readOptional(FILES.relay4), relay6: readOptional(FILES.relay6),
+    };
     // A truncated download would otherwise label everything "regular" without any error.
     if (lists.vpn4.length < minEntries || lists.dc4.length < minEntries) return null;
     let fetchedAt: string | undefined;
     try { fetchedAt = JSON.parse(readFileSync(join(dir, "meta.json"), "utf8")).fetchedAt; } catch { /* optional */ }
     return {
-      classifier: new NetworkClassifier({ vpn: [...lists.vpn4, ...lists.vpn6], datacenter: [...lists.dc4, ...lists.dc6] }),
+      classifier: new NetworkClassifier({ vpn: [...lists.vpn4, ...lists.vpn6], datacenter: [...lists.dc4, ...lists.dc6], relay: [...lists.relay4, ...lists.relay6] }),
       fetchedAt,
     };
   } catch {

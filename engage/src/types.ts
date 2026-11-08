@@ -14,8 +14,9 @@ export interface Comment {
  * vpn / datacenter: IP is on the X4BNet lists. timezone: IP looks regular but the browser's timezone belongs to a
  * different country than the IP's. regular: neither. Only this label is stored, never the IP or the timezone.
  */
-export type NetworkLabel = "vpn" | "datacenter" | "timezone" | "regular";
-export type FlaggedLabel = Exclude<NetworkLabel, "regular">;
+export type NetworkLabel = "relay" | "vpn" | "datacenter" | "timezone" | "regular";
+/** relay (Apple iCloud Private Relay: real people) is deliberately not flagged; it counts as regular traffic. */
+export type FlaggedLabel = Exclude<NetworkLabel, "regular" | "relay">;
 
 export interface PageView {
   site: string;

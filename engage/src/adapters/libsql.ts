@@ -33,7 +33,7 @@ async function migrate(db: Db) {
   }
 }
 
-const NETWORKS = new Set(["vpn", "datacenter", "timezone", "regular"]);
+const NETWORKS = new Set(["relay", "vpn", "datacenter", "timezone", "regular"]);
 
 /** Works with Turso (hosted), a local SQLite file (file:dev.db) or Cloudflare-style libSQL. */
 export async function libsqlStore(db: Db): Promise<Store> {

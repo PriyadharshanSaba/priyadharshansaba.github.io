@@ -4,7 +4,7 @@
  * callers store the returned label, never the address.
  */
 
-export type Network = "vpn" | "datacenter" | "regular";
+export type Network = "relay" | "vpn" | "datacenter" | "regular";
 export type ParsedIp = { v: 4; n: number } | { v: 6; n: bigint };
 
 const V4 = /^(0|[1-9]\d{0,2})(\.(0|[1-9]\d{0,2})){3}$/;
@@ -128,11 +128,17 @@ function build(entries: string[]) {
 export class NetworkClassifier {
   private vpn: ReturnType<typeof build>;
   private datacenter: ReturnType<typeof build>;
+  private relay: ReturnType<typeof build>;
 
-  /** `vpn` = strictly VPN networks; `datacenter` = VPNs plus datacenters. VPN is checked first. */
-  constructor(lists: { vpn: string[]; datacenter: string[] }) {
+  /**
+   * `vpn` = strictly VPN networks; `datacenter` = VPNs plus datacenters. `relay` = Apple iCloud Private Relay
+   * egress ranges: ordinary people behind an anonymising proxy. Checked FIRST so they are not mistaken for
+   * VPN traffic (the VPN lists also contain Apple's ranges).
+   */
+  constructor(lists: { vpn: string[]; datacenter: string[]; relay?: string[] }) {
     this.vpn = build(lists.vpn);
     this.datacenter = build(lists.datacenter);
+    this.relay = build(lists.relay ?? []);
   }
 
   /** Number of merged ranges per list (for status and sanity checks). */
@@ -140,6 +146,7 @@ export class NetworkClassifier {
     return {
       vpn: this.vpn.v4.size + this.vpn.v6.size,
       datacenter: this.datacenter.v4.size + this.datacenter.v6.size,
+      relay: this.relay.v4.size + this.relay.v6.size,
     };
   }
 
@@ -149,6 +156,7 @@ export class NetworkClassifier {
     if (!p) return null;
     const n = BigInt(p.n);
     const pick = (set: ReturnType<typeof build>) => (p.v === 4 ? set.v4 : set.v6);
+    if (pick(this.relay).has(n)) return "relay";
     if (pick(this.vpn).has(n)) return "vpn";
     if (pick(this.datacenter).has(n)) return "datacenter";
     return "regular";

@@ -51,9 +51,39 @@ async function download(name, url) {
   throw new Error(`${name}: ${lastError.message} (after ${TRIES} tries, ${url})`);
 }
 
+// Apple publishes iCloud Private Relay's egress ranges as "cidr,country,region,city,". Those people are real, so
+// they get their own `relay` label and are not flagged. Best effort: if Apple's file is unavailable the build
+// still succeeds (relay users then look like VPN traffic until the next deploy).
+const RELAY_URL = process.env.RELAY_URL ?? "https://mask-api.icloud.com/egress-ip-ranges.csv";
+async function downloadRelay() {
+  let lastError;
+  for (let attempt = 1; attempt <= TRIES; attempt++) {
+    try {
+      const res = await fetch(RELAY_URL, { signal: AbortSignal.timeout(60_000) });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const v4 = new Set(), v6 = new Set();
+      for (const line of (await res.text()).split(/\r?\n/)) {
+        const cidr = line.split(",")[0].trim();
+        if (V4.test(cidr)) v4.add(cidr); else if (V6.test(cidr)) v6.add(cidr);
+      }
+      if (v4.size < 1000) throw new Error(`only ${v4.size} IPv4 entries (expected at least 1000)`);
+      return {
+        "relay-ipv4.txt": { text: [...v4].join("\n") + "\n", count: v4.size },
+        "relay-ipv6.txt": { text: [...v6].join("\n") + "\n", count: v6.size },
+      };
+    } catch (e) {
+      lastError = e;
+      if (attempt < TRIES) await sleep(2000 * attempt);
+    }
+  }
+  console.warn(`Skipping Private Relay ranges: ${lastError.message} (${RELAY_URL})`);
+  return {};
+}
+
 try {
   const results = {};
   for (const [name, url] of Object.entries(SOURCES)) results[name] = await download(name, url);
+  Object.assign(results, await downloadRelay());
 
   await mkdir(OUT, { recursive: true });
   for (const [name, r] of Object.entries(results)) {       // write to a temp name, then rename: no half-written files
@@ -65,7 +95,7 @@ try {
 
   console.log("Updated VPN/datacenter lists in", OUT);
   for (const [n, c] of Object.entries(counts)) console.log(`  ${n.padEnd(22)} ${c} networks`);
-  console.log("Data: X4BNet/lists_vpn. IP address data powered by IPLocate.io.");
+  console.log("Data: X4BNet/lists_vpn. IP address data powered by IPLocate.io. Relay ranges: Apple.");
 } catch (e) {
   console.error("Could not update the lists:", e.message);
   console.error("Existing data (if any) was left unchanged.");

@@ -51,7 +51,8 @@ checked against the [X4BNet/lists_vpn](https://github.com/X4BNet/lists_vpn) netw
 
 | Label | Meaning |
 |---|---|
-| `vpn` | on the strict VPN list (checked first) |
+| `relay` | Apple iCloud Private Relay egress range (checked first). Real people, so **not flagged**: counted as regular traffic. The VPN lists also contain Apple's ranges, which is why this needs its own list |
+| `vpn` | on the strict VPN list |
 | `datacenter` | on the combined VPN + datacenter list ("anything that is not an eyeball network") |
 | `timezone` | not on a list, but the browser's timezone belongs to a different country than the IP's (see below) |
 | `regular` | on neither list, and no timezone mismatch |
@@ -62,7 +63,11 @@ checked against the [X4BNet/lists_vpn](https://github.com/X4BNet/lists_vpn) netw
 - The dashboard keeps all flagged visits (`vpn`, `datacenter`, `timezone`) out of the Cities and Countries lists and
   groups them in a collapsible **VPN / datacenter / timezone mismatch** row under each. They still count in the
   headline Visits and in Pages.
-- Lists are matched in memory (merged ranges + binary search): about 90 ms and 20 MB to load once per cold
+- Private Relay ranges come from Apple's published [egress-ip-ranges.csv](https://mask-api.icloud.com/egress-ip-ranges.csv),
+  downloaded with the other lists at build time. That download is best effort: if Apple's file is unavailable the
+  build still succeeds, and relay users look like VPN traffic until the next deploy. A relay visit is never turned
+  into a `timezone` flag.
+- Lists are matched in memory (merged ranges + binary search): about 0.7 s and 170 MB extra (mostly the Private Relay IPv6 list) to load once per cold
   start, then under a microsecond per lookup.
 - The lists are broad but not complete (X4BNet says it does not list every VPN), so some VPN and bot traffic
   will still look regular. Old rows can't be reclassified because no IPs were kept.

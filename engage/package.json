@@ -9,7 +9,7 @@
     "./libsql": "./src/adapters/libsql.ts"
   },
   "scripts": {
-    "test": "node --test test/engage.test.ts test/libsql.test.ts test/analytics.test.ts test/stats.test.ts test/network.test.ts test/network-views.test.ts test/network-loader.test.ts test/timezone.test.ts test/timezone-views.test.ts test/track.test.ts test/day-countries.test.ts test/dashboard.test.ts",
+    "test": "node --test test/engage.test.ts test/libsql.test.ts test/analytics.test.ts test/stats.test.ts test/network.test.ts test/network-views.test.ts test/network-loader.test.ts test/timezone.test.ts test/timezone-views.test.ts test/track.test.ts test/day-countries.test.ts test/relay.test.ts test/dashboard.test.ts",
     "lists": "node scripts/fetch-lists.mjs",
     "deploy": "npx vercel --prod",
     "dev": "node src/dev-server.ts",
