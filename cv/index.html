@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Priyadharshan Sababathi — CV</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="CV of Priyadharshan Sababathi — Fullstack & Backend Engineer, Bengaluru." />
+  <meta name="description" content="CV of Priyadharshan Sababathi — Full-Stack Engineer, Telemetry & Data Platforms, Bengaluru." />
   <style>
     body {
       font-family: Calibri, Carlito, sans-serif;
@@ -17,6 +17,7 @@
     h2 { font-size: 1.1em; border-bottom: 1px solid; }
     h3 { font-size: 1em; margin: 0.8em 0 0; }
     p, ul, dl { margin: 0.3em 0; }
+    h2 a, li a { color: inherit; }
     dt { font-weight: bold; float: left; margin-right: 0.4em; }
     dd { margin: 0; }
     @media print {
@@ -30,7 +31,7 @@
 <nav><a href="../">← back</a></nav>
 
 <h1>Priyadharshan Sababathi</h1>
-<p>Fullstack &amp; Backend Engineer · Bengaluru, India</p>
+<p><b>Full-Stack Engineer · Telemetry &amp; Data Platforms</b> · Bengaluru, India · Open to international relocation</p>
 <p>
   <a href="mailto:priyadharshan.97@gmail.com">priyadharshan.97@gmail.com</a> ·
   <a href="https://www.linkedin.com/in/priyadharshan-sababathi/">linkedin.com/in/priyadharshan-sababathi</a> ·
@@ -38,63 +39,71 @@
   <a href="https://priyadharshansaba.github.io/">priyadharshansaba.github.io</a>
 </p>
 
-<h2>Summary</h2>
-<p>Backend and fullstack engineer, 7 years, building and operating production systems in fintech and B2B SaaS with primary focus on first principles, cost optimisation and lean systems.</p>
-<p>Worked on document-extraction pipeline using AI vision models. Ships payments, auth and billing with end to end ownership.</p>
-<p>Interested in distributed systems and mission-critical software. Based in Bengaluru, available for remote roles and flexible on timezone overlap.</p>
+<h2>Profile</h2>
+<p>Full-stack engineer with 7 years in fintech and B2B SaaS, working with Python, databases and APIs.
+I now build full-stack systems with AI coding agents like Claude Code, while owning the architecture.</p>
+<p>Much of my work has been on the data side: ingestion pipelines, telemetry, fault detection and the dashboards that make data useful.</p>
+<p>I'm drawn to mission-critical software, from ground stations and rockets to fly-by-wire aircraft, and want to work where telemetry and reliability matter most.</p>
+
+<h2>Where I Can Help</h2>
+<ul>
+  <li><b>Telemetry ingestion:</b> reliable pipelines that collect high-volume machine and sensor data, such as RPM readings.</li>
+  <li><b>Analysis &amp; event detection:</b> turning raw readings into alerts, anomaly flags and root-cause findings engineers can act on.</li>
+  <li><b>Full-stack data products:</b> Python APIs and React/Next.js dashboards that help engineers and customers explore the data.</li>
+  <li><b>Performance &amp; reliability:</b> finding bottlenecks across the stack; in earlier roles I cut API latency 25× and cloud spend by 70%.</li>
+</ul>
 
 <h2>Experience</h2>
 
-<h3>Freelancing Software Engineer</h3>
-<p>Bengaluru · May 2026 – Present</p>
-<ul>
-  <li><b>Shipped the entire product solo</b> — early-stage financial-literacy venture, Next.js, React 19 and TypeScript on PostgreSQL (Neon), deployed on Vercel.</li>
-  <li><b>Built the payments and invoicing path end to end</b> — Razorpay with HMAC-SHA256 webhook verification, an idempotent payment→invoice handoff, and GST-compliant invoicing with gapless per-year numbering and buyer-state tax computation.</li>
-  <li><b>Google OAuth, passwordless email-OTP auth</b> with rate-limited codes, httpOnly cookie sessions and middleware route gating.</li>
-</ul>
-
 <h3>Software Engineer II — SuperPe Marketplace</h3>
-<p>Bengaluru · Mar 2024 – Jun 2025, Dec 2025 – Jun 2026<br><i>Consumer fintech; high-volume payment and transaction flows.</i></p>
+<p>Bengaluru · Mar 2024 – Jun 2025, Dec 2025 – Jun 2026</p>
 <ul>
-  <li><b>Owned a document-extraction pipeline running inline on the payment authorisation path</b> — on the order of tens of thousands of invoice and credit-card images a day through AWS Textract and Google Document AI.</li>
-  <li><b>Cross-checked model-extracted cardholder names against BBPS biller records</b> rather than trusting OCR alone, for credit card ownership verification. Routed high-confidence extractions to automated decisions.</li>
-  <li><b>Cut cloud spend by 70%</b> — $1,100/day to $330/day — by reworking service logic and moving to microservices.</li>
-  <li><b>Improved API latency 25×</b>, taking critical endpoints from 20s to under 800ms on high-volume financial operations.</li>
-  <li><b>Cut MTTD by over 40%</b> with self-hosted telemetry; led 3 engineers and established the incident-response workflow.</li>
+  <li>Built self-hosted telemetry and the incident-response workflow, cutting mean time to detect incidents by 40%+; led 3 engineers.</li>
+  <li>Diagnosed and removed bottlenecks on critical endpoints under high load: 20 s to under 800 ms (25×).</li>
+  <li>Cut cloud spend by 70% ($1,100/day to $330/day) by reworking service logic and moving to microservices.</li>
 </ul>
-
 <p><i>Career break (Jun–Dec 2025): documentary photography across India, with freelance software work alongside.</i></p>
 
 <h3>Software Engineer II — Hiver</h3>
-<p>Bengaluru · Jan 2022 – Feb 2024<br><i>B2B SaaS; email collaboration at scale.</i></p>
+<p>Bengaluru · Jan 2022 – Feb 2024</p>
 <ul>
-  <li><b>Owned telemetry across services</b> — built the fault-detection and alerting layer, cutting time-to-detection and on-call load.</li>
-  <li><b>Architected service boundaries for fault isolation</b> and ran Kubernetes on AWS for deployment and scaling; resolved recurring latency and traffic-spike failures affecting platform stability by building monitoring and alerting systems.</li>
+  <li>Owned telemetry across services: built the fault-detection and alerting layer, cutting time-to-detection and on-call load.</li>
+  <li>Fixed recurring latency and traffic-spike failures by instrumenting services and building monitoring and alerting.</li>
+  <li>Designed service boundaries for fault isolation; ran Kubernetes on AWS for deployment and scaling.</li>
 </ul>
 
 <h3>Software Engineer I — Hiver</h3>
 <p>Bengaluru · Aug 2019 – Dec 2021</p>
 <ul>
-  <li>Increased Gmail sync throughput by rebuilding large-scale message ingestion pipelines.</li>
-  <li>Built fault-tolerant queues, caching layers and async task pipelines on Redis, Kafka, RabbitMQ and MySQL.</li>
+  <li>Rebuilt large-scale message ingestion pipelines, increasing Gmail sync throughput.</li>
+  <li>Built fault-tolerant queues, caching and async task pipelines on Kafka, RabbitMQ, Redis and MySQL.</li>
+</ul>
+
+<h2>Open Source &amp; Projects</h2>
+<ul>
+  <li><b><a href="https://bodhaventures.in">Bodha Ventures LLP</a> — Founding Engineer:</b> independent developer building in-house dashboards and tools for ops and accounts: <b>Toodex</b> (defence system components engineering) and <b>SR Enterprises</b> (ISRO component supplier for 25+ years).</li>
+  <li><b><a href="https://github.com/redis/redis-py/pull/3863">Fault-Injection Testing</a> (open source):</b> verified a redis-py connection-handling fix (#3863) at the network level by building a fault-injecting TCP proxy between the client and a live Redis instance, reproducing real connection resets during handshake.</li>
+  <li><b><a href="../paisa/">Paisa</a>:</b> a personal AI agent that manages my money and tracks my financial goals in real time.</li>
+  <li><b><a href="../trippersx/">TrippersX</a>:</b> AI agents that plan client trips for side income, while I own commercial decisions, relationships and execution.</li>
 </ul>
 
 <h2>Technical Skills</h2>
 <dl>
-  <dt>Languages:</dt> <dd>Python, JavaScript, C (learning)</dd>
-  <dt>AI / ML in production:</dt> <dd>AWS Textract, Google Document AI, structured extraction</dd>
-  <dt>Infrastructure:</dt> <dd>AWS, GCP, Kubernetes, cost optimisation</dd>
-  <dt>Observability:</dt> <dd>Datadog, Logstash, custom telemetry, alerting, incident response, root-cause analysis</dd>
+  <dt>Languages:</dt> <dd>Python, TypeScript, JavaScript; C (basic, actively learning)</dd>
+  <dt>Frontend:</dt> <dd>React, Next.js; API design, authentication and sessions</dd>
+  <dt>Data &amp; messaging:</dt> <dd>Kafka, RabbitMQ, Redis, MySQL, PostgreSQL</dd>
+  <dt>Telemetry &amp; observability:</dt> <dd>custom telemetry, Datadog, Logstash, alerting, fault detection, root-cause analysis</dd>
+  <dt>Infrastructure:</dt> <dd>AWS, GCP, Kubernetes, containers, Git</dd>
 </dl>
-
-<h2>Open Source</h2>
-<p><b>Independently verified a <a href="https://github.com/redis/redis-py/pull/3863">redis-py connection-handling fix (#3863)</a> at the network level</b> by building a fault-injecting TCP proxy between the client and a live Redis instance, reproducing genuine connection resets during handshake.</p>
 
 <h2>Education</h2>
 <p><b>B.E., Computer Science and Engineering</b> — Visvesvaraya Technological University · 2015 – 2019</p>
 
+<h2>Languages</h2>
+<p>English (fluent, professional) · German (beginner, A1, currently studying)</p>
+
 <h2>Beyond Engineering</h2>
-<p>Documentary / travel photography — first prize, Manotsava.<br>
+<p>Documentary photography (Winner, Manotsava) · Guest lectures on financial literacy<br>
 Training Muay Thai and Brazilian jiu-jitsu.</p>
 
 <!-- Anonymous page-view counter (engage): no cookies, deferred, never blocks rendering -->

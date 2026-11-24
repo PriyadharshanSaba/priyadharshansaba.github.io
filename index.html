@@ -219,6 +219,8 @@
     .socials a:hover { text-decoration: underline; opacity: 1; }
     .cv-section .out a { color: inherit; }
     .cv-section .out a:hover { opacity: 1; text-decoration: underline; }
+    .cv-section li a { color: inherit; }
+    .cv-section li a:hover { text-decoration: underline; }
 
     .terminal-bullets {
       display: flex;
@@ -506,43 +508,37 @@
 
               <section class="cv-section">
                 <p class="cmd"><span class="ps1">~$</span> cat summary.txt</p>
-                <p class="out">Backend and fullstack engineer, 7 years, building and operating production systems in fintech and B2B SaaS with primary focus on first principles, cost optimisation and lean systems.</p>
-                <p class="out">Worked on document-extraction pipeline using AI vision models. Ships payments, auth and billing with end to end ownership.</p>
-                <p class="out">Interested in distributed systems and mission-critical software. Based in Bengaluru, available for remote roles and flexible on timezone overlap.</p>
+                <p class="out">Full-stack engineer with 7 years in fintech and B2B SaaS, working with Python, databases and APIs. I now build full-stack systems with AI coding agents like Claude Code, while owning the architecture.</p>
+                <p class="out">Much of my work has been on the data side: ingestion pipelines, telemetry, fault detection and the dashboards that make data useful.</p>
+                <p class="out">I'm drawn to mission-critical software, from ground stations and rockets to fly-by-wire aircraft, and want to work where telemetry and reliability matter most. Based in Bengaluru, open to international relocation.</p>
               </section>
 
               <section class="cv-section">
-                <p class="cmd"><span class="ps1">~$</span> ls projects/</p>
-                <p class="out"><a href="paisa/">paisa/</a> <span class="comment"># self-hosted, single-user spending tracker · counts only what you actually live on</span></p>
+                <p class="cmd"><span class="ps1">~$</span> cat where-i-can-help.txt</p>
+                <dl class="kv">
+                  <dt>telemetry_ingestion</dt>
+                  <dd>Reliable pipelines that collect high-volume machine and sensor data, such as RPM readings.</dd>
+                  <dt>event_detection</dt>
+                  <dd>Turning raw readings into alerts, anomaly flags and root-cause findings engineers can act on.</dd>
+                  <dt>data_products</dt>
+                  <dd>Python APIs and React/Next.js dashboards that help engineers and customers explore the data.</dd>
+                  <dt>performance</dt>
+                  <dd>Finding bottlenecks across the stack; in earlier roles I cut API latency 25× and cloud spend by 70%.</dd>
+                </dl>
               </section>
 
               <section class="cv-section">
                 <p class="cmd"><span class="ps1">~$</span> cat experience.log</p>
 
                 <div class="pane">
-                  <p class="pane-label">Freelance</p>
-                  <p class="pane-label pane-label-right">2026 – now</p>
-                  <p class="job-title">Freelancing Software Engineer</p>
-                  <p class="job-meta">Bengaluru · May 2026 – Present</p>
-                  <ul>
-                    <li>Shipped the entire product solo — early-stage financial-literacy venture, Next.js, React 19 and TypeScript on PostgreSQL (Neon), deployed on Vercel.</li>
-                    <li>Built the payments and invoicing path end to end — Razorpay with HMAC-SHA256 webhook verification, an idempotent payment→invoice handoff, and GST-compliant invoicing with gapless per-year numbering and buyer-state tax computation.</li>
-                    <li>Google OAuth, passwordless email-OTP auth with rate-limited codes, httpOnly cookie sessions and middleware route gating.</li>
-                  </ul>
-                </div>
-
-                <div class="pane">
                   <p class="pane-label">SuperPe Marketplace</p>
                   <p class="pane-label pane-label-right">2024 – 2026</p>
-                  <p class="comment"># Consumer fintech; high-volume payment and transaction flows.</p>
                   <p class="job-title">Software Engineer II</p>
                   <p class="job-meta">Bengaluru · Mar 2024 – Jun 2025, Dec 2025 – Jun 2026</p>
                   <ul>
-                    <li>Owned a document-extraction pipeline running inline on the payment authorisation path — on the order of tens of thousands of invoice and credit-card images a day through AWS Textract and Google Document AI.</li>
-                    <li>Cross-checked model-extracted cardholder names against BBPS biller records rather than trusting OCR alone, for credit card ownership verification. Routed high-confidence extractions to automated decisions.</li>
-                    <li>Cut cloud spend by 70% — $1,100/day to $330/day — by reworking service logic and moving to microservices.</li>
-                    <li>Improved API latency 25×, taking critical endpoints from 20s to under 800ms on high-volume financial operations.</li>
-                    <li>Cut MTTD by over 40% with self-hosted telemetry; led 3 engineers and established the incident-response workflow.</li>
+                    <li>Built self-hosted telemetry and the incident-response workflow, cutting mean time to detect incidents by 40%+; led 3 engineers.</li>
+                    <li>Diagnosed and removed bottlenecks on critical endpoints under high load: 20 s to under 800 ms (25×).</li>
+                    <li>Cut cloud spend by 70% ($1,100/day to $330/day) by reworking service logic and moving to microservices.</li>
                   </ul>
                 </div>
 
@@ -551,14 +547,14 @@
                 <div class="pane">
                   <p class="pane-label">Hiver</p>
                   <p class="pane-label pane-label-right">2019 – 2024</p>
-                  <p class="comment"># B2B SaaS; email collaboration at scale.</p>
 
                   <div class="pane-role">
                     <p class="job-title">Software Engineer II</p>
                     <p class="job-meta">Bengaluru · Jan 2022 – Feb 2024</p>
                     <ul>
-                      <li>Owned telemetry across services — built the fault-detection and alerting layer, cutting time-to-detection and on-call load.</li>
-                      <li>Architected service boundaries for fault isolation and ran Kubernetes on AWS for deployment and scaling; resolved recurring latency and traffic-spike failures affecting platform stability by building monitoring and alerting systems.</li>
+                      <li>Owned telemetry across services: built the fault-detection and alerting layer, cutting time-to-detection and on-call load.</li>
+                      <li>Fixed recurring latency and traffic-spike failures by instrumenting services and building monitoring and alerting.</li>
+                      <li>Designed service boundaries for fault isolation; ran Kubernetes on AWS for deployment and scaling.</li>
                     </ul>
                   </div>
 
@@ -566,30 +562,37 @@
                     <p class="job-title">Software Engineer I</p>
                     <p class="job-meta">Bengaluru · Aug 2019 – Dec 2021</p>
                     <ul>
-                      <li>Increased Gmail sync throughput by rebuilding large-scale message ingestion pipelines.</li>
-                      <li>Built fault-tolerant queues, caching layers and async task pipelines on Redis, Kafka, RabbitMQ and MySQL.</li>
+                      <li>Rebuilt large-scale message ingestion pipelines, increasing Gmail sync throughput.</li>
+                      <li>Built fault-tolerant queues, caching and async task pipelines on Kafka, RabbitMQ, Redis and MySQL.</li>
                     </ul>
                   </div>
                 </div>
               </section>
 
               <section class="cv-section">
-                <p class="cmd"><span class="ps1">~$</span> cat skills.conf</p>
-                <dl class="kv">
-                  <dt>languages</dt>
-                  <dd>Python, JavaScript, C (learning)</dd>
-                  <dt>ai_ml_in_prod</dt>
-                  <dd>AWS Textract, Google Document AI, structured extraction</dd>
-                  <dt>infrastructure</dt>
-                  <dd>AWS, GCP, Kubernetes, cost optimisation</dd>
-                  <dt>observability</dt>
-                  <dd>Datadog, Logstash, custom telemetry, alerting, incident response, root-cause analysis</dd>
-                </dl>
+                <p class="cmd"><span class="ps1">~$</span> ls projects/</p>
+                <ul>
+                  <li><a href="https://bodhaventures.in" target="_blank"><b>Bodha Ventures LLP</b></a> — Founding Engineer: independent developer building in-house dashboards and tools for ops and accounts: Toodex (defence system components engineering) and SR Enterprises (ISRO component supplier for 25+ years).</li>
+                  <li><a href="https://github.com/redis/redis-py/pull/3863" target="_blank"><b>Fault-Injection Testing</b></a> (open source): verified a redis-py connection-handling fix (#3863) at the network level by building a fault-injecting TCP proxy between the client and a live Redis instance, reproducing real connection resets during handshake.</li>
+                  <li><a href="paisa/"><b>Paisa</b></a>: a personal AI agent that manages my money and tracks my financial goals in real time.</li>
+                  <li><a href="trippersx/"><b>TrippersX</b></a>: AI agents that plan client trips for side income, while I own commercial decisions, relationships and execution.</li>
+                </ul>
               </section>
 
               <section class="cv-section">
-                <p class="comment job"># open source</p>
-                <p class="out">Independently verified a <a href="https://github.com/redis/redis-py/pull/3863" target="_blank" style="color: inherit;">redis-py connection-handling fix (#3863)</a> at the network level by building a fault-injecting TCP proxy between the client and a live Redis instance, reproducing genuine connection resets during handshake.</p>
+                <p class="cmd"><span class="ps1">~$</span> cat skills.conf</p>
+                <dl class="kv">
+                  <dt>languages</dt>
+                  <dd>Python, TypeScript, JavaScript; C (basic, actively learning)</dd>
+                  <dt>frontend</dt>
+                  <dd>React, Next.js; API design, authentication and sessions</dd>
+                  <dt>data_messaging</dt>
+                  <dd>Kafka, RabbitMQ, Redis, MySQL, PostgreSQL</dd>
+                  <dt>observability</dt>
+                  <dd>Custom telemetry, Datadog, Logstash, alerting, fault detection, root-cause analysis</dd>
+                  <dt>infrastructure</dt>
+                  <dd>AWS, GCP, Kubernetes, containers, Git</dd>
+                </dl>
               </section>
 
               <section class="cv-section">
@@ -599,9 +602,14 @@
               </section>
 
               <section class="cv-section">
+                <p class="comment job"># languages</p>
+                <p class="out">English (fluent, professional) · German (beginner, A1, currently studying)</p>
+              </section>
+
+              <section class="cv-section">
                 <p class="comment job"># beyond engineering</p>
                 <ul>
-                  <li>Documentary / travel photography — first prize, Manotsava.</li>
+                  <li>Documentary photography (Winner, Manotsava) · Guest lectures on financial literacy</li>
                   <li>Training Muay Thai and Brazilian jiu-jitsu.</li>
                 </ul>
               </section>

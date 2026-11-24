@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TrippersX — AI agents that plan client trips</title>
+<meta name="description" content="TrippersX is a set of AI agents that plan client trips, work out the planner's earnings and publish a simple, drag-and-drop trip page, while a person owns the commercial decisions, the relationships and the execution.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+:root{
+  --paper:#F5F3EE; --card:#FFFFFF; --sunk:#EFEBE4; --sheet:#FFFDF9;
+  --ink:#1B1A17; --ink-2:#57534E; --ink-3:#6B655D; --rule:#E2DED6; --tile:#D9D2C5;
+  --accent:#1D6352; --accent-soft:#E3EEE9; --accent-line:#9CC5B7; --warn:#B4532A; --gold:#F6E3B4; --gold-ink:#5C3D00;
+  --display:"Bricolage Grotesque","Inter",system-ui,sans-serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+section,[id]{scroll-margin-top:16px}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;letter-spacing:-.02em;text-wrap:balance}
+p{text-wrap:pretty}
+img{display:block}
+a{color:var(--accent)}
+
+nav{display:flex;justify-content:space-between;align-items:center;padding:20px 0}
+nav .logo{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.03em;display:flex;align-items:center;gap:10px}
+nav .logo i{width:28px;height:28px;border-radius:9px;background:var(--accent);display:inline-flex;align-items:center;justify-content:center}
+nav span{font-size:13px;color:var(--ink-3)}
+@media(max-width:520px){nav:not(.tocnav)>span{display:none}}
+
+.hero{display:grid;gap:48px;align-items:center;padding:48px 0 80px}
+.pill{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:6px 14px;margin-bottom:22px}
+.pill b{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(29,99,82,.18)}
+.hero h1{font-size:clamp(40px,6.6vw,68px);line-height:1.02;font-weight:800;letter-spacing:-.035em}
+.hero h1 span{color:var(--accent)}
+.hero p{color:var(--ink-2);font-size:19px;max-width:48ch;margin:22px 0 0}
+.cv{margin-top:22px;padding:14px 16px;border-left:0;border-radius:12px;background:var(--card);border:1px solid var(--rule);font-size:14px;color:var(--ink-2);max-width:52ch}
+.cv b{font:500 12px var(--mono);color:var(--accent);display:block;margin-bottom:4px;letter-spacing:.02em}
+.stats{display:flex;flex-wrap:wrap;gap:28px;margin-top:32px}
+.stats div{font-size:13px;color:var(--ink-3);max-width:19ch}
+.stats strong{display:block;font-family:var(--display);font-size:26px;color:var(--ink);font-weight:700;letter-spacing:-.02em}
+@media(min-width:880px){.hero{grid-template-columns:1.2fr 1fr}}
+
+section{padding:72px 0;border-top:1px solid var(--rule)}
+.eyebrow{font-size:13px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+section h2{font-size:clamp(28px,4.4vw,42px);line-height:1.12}
+.lede{color:var(--ink-2);font-size:17px;max-width:62ch;margin:14px 0 40px}
+
+.card{background:var(--card);border:1px solid var(--rule);border-radius:16px;padding:24px}
+.card h3{font-size:19px;margin-bottom:8px;letter-spacing:-.01em}
+.card p{margin:0;color:var(--ink-2);font-size:15px}
+.num{font:500 12px var(--mono);color:var(--accent);margin-bottom:14px;display:block}
+.steps{display:grid;gap:16px}
+@media(min-width:560px){.steps{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:940px){.steps{grid-template-columns:repeat(4,1fr)}}
+
+.split{display:grid;gap:16px}
+@media(min-width:760px){.split{grid-template-columns:1fr 1fr}}
+.split .card h3{font-size:21px}
+.split ul{margin:12px 0 0;padding:0;list-style:none;color:var(--ink-2);font-size:15px}
+.split li{padding:9px 0;border-top:1px solid var(--rule)}
+.split li:first-child{border-top:0}
+.split .you{background:var(--accent);border-color:var(--accent)}
+.split .you h3{color:#fff}
+.split .you li{color:#DCEBE5;border-color:rgba(255,255,255,.18)}
+
+.feature{display:grid;gap:36px;align-items:center;padding:40px 0}
+.feature .eyebrow{margin-bottom:8px}
+.feature h3{font-size:clamp(24px,3.4vw,32px);line-height:1.2;margin-bottom:12px}
+.feature p{color:var(--ink-2);margin:0 0 18px;max-width:48ch}
+.feature ul{margin:0;padding:0;list-style:none;color:var(--ink-2)}
+.feature li{padding-left:26px;position:relative;margin:8px 0}
+.feature li::before{content:"";position:absolute;left:0;top:7px;width:12px;height:12px;border-radius:50%;background:var(--accent-soft);border:1px solid var(--accent)}
+@media(min-width:880px){.feature{grid-template-columns:1.1fr 1fr;gap:64px}.feature.flip>:first-child{order:2}}
+.caption{font-size:13px;color:var(--ink-3);margin-top:12px;text-align:center}
+
+/* ---------- device frames ---------- */
+.phone{width:320px;max-width:100%;margin:0 auto;border-radius:38px;background:#1B1A17;padding:10px;box-shadow:0 30px 70px rgba(60,50,30,.22)}
+.phone .screen{border-radius:30px;overflow:hidden;background:var(--paper);height:600px;position:relative}
+.browser{border-radius:16px;background:var(--card);border:1px solid var(--rule);box-shadow:0 30px 70px rgba(60,50,30,.16);overflow:hidden}
+.browser .bar{display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--rule);background:#FBFAF7}
+.browser .bar i{width:10px;height:10px;border-radius:50%;background:#E2DED6}
+.browser .bar span{margin-left:10px;font:500 12px var(--mono);color:var(--ink-3);background:var(--sunk);padding:3px 10px;border-radius:6px}
+.browser .body{background:var(--paper);padding:18px}
+
+/* ---------- itinerary UI (shared by frames and the demo) ---------- */
+.ui{font-family:var(--sans);color:var(--ink)}
+.ui .k{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.ui .place{font-family:var(--display);font-weight:800;letter-spacing:-.02em;line-height:1}
+.ui .chips{display:flex;gap:6px;flex-wrap:wrap}
+.ui .chip{padding:4px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:11px;font-weight:600}
+.ui .tabs{display:flex;gap:6px;padding:8px 0;border-bottom:1px solid var(--rule);overflow:hidden}
+.ui .tab{flex:0 0 auto;padding:5px 10px;border-radius:10px;background:#fff;border:1px solid var(--rule);font-size:10px;line-height:1.3}
+.ui .tab b{display:block;font-size:11px}
+.ui .row{display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--rule);align-items:flex-start}
+.ui .lab{flex:0 0 68px;font-size:12px;font-weight:600;line-height:1.3}
+.ui .lab small{display:block;font-weight:400;color:var(--ink-3);font-size:10px}
+.ui .meter{display:block;width:54px;height:3px;border-radius:9px;background:var(--rule);margin-top:5px;overflow:hidden}
+.ui .meter i{display:block;height:100%;background:var(--accent)}
+.ui .cards{display:flex;gap:8px;overflow:hidden;flex:1;min-width:0}
+.ui .c{flex:0 0 auto;width:96px}
+.ui .ph{position:relative;width:100%;aspect-ratio:1/1;border-radius:12px;overflow:hidden;background:var(--tile)}
+.ui .ph img{width:100%;height:100%;object-fit:cover}
+.ui .c .t{font-size:11px;font-weight:600;line-height:1.25;margin-top:5px}
+.ui .c .m{font-size:10px;color:var(--ink-3)}
+.ui .tag{position:absolute;top:5px;left:5px;padding:2px 6px;border-radius:999px;background:#fff;font-size:9px;font-weight:600}
+.ui .tag.dark{background:var(--ink);color:#fff}
+.ui .tag.gold{background:var(--gold);color:var(--gold-ink)}
+.ui .opts{flex:0 0 auto;border:2px dashed #CFC8BC;border-radius:14px;padding:7px;background:rgba(255,255,255,.55)}
+.ui .opts .h{font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-bottom:5px}
+.ui .opts .c{width:76px}
+
+/* quick view */
+.qv{background:var(--sheet);border-radius:22px 22px 0 0;overflow:hidden;position:absolute;left:0;right:0;bottom:0;box-shadow:0 -10px 30px rgba(0,0,0,.18)}
+.qv .hero-img{aspect-ratio:16/10;background:var(--tile)}
+.qv .hero-img img{width:100%;height:100%;object-fit:cover}
+.qv .in{padding:14px 16px 18px;display:flex;flex-direction:column;gap:9px}
+.qv h4{margin:0;font-family:var(--display);font-size:22px;line-height:1.1;letter-spacing:-.01em}
+.qv p{margin:0;font-size:13px;line-height:1.5}
+.qv .facts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.qv .facts div{background:var(--paper);border-radius:10px;padding:7px 9px;font-size:10px;color:var(--ink-3);line-height:1.3}
+.qv .facts b{display:block;color:var(--ink);font-size:11px}
+.qv .btns{display:flex;gap:8px}
+.qv .btns span{flex:1;text-align:center;border-radius:10px;padding:10px 0;font-size:12px;font-weight:600}
+.scrim{position:absolute;inset:0;background:rgba(27,26,23,.5)}
+
+/* ---------- live demo ---------- */
+.demo{background:var(--card);border:1px solid var(--rule);border-radius:20px;padding:18px;box-shadow:0 30px 70px rgba(60,50,30,.14);user-select:none;-webkit-user-select:none}
+.demo .top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap}
+.demo .top b{font-size:13px}
+.demo .top button{font:600 12px var(--sans);border:1px solid var(--rule);background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;min-height:32px}
+.demo .row{padding:12px 0;transition:opacity .2s}
+.demo .row.dim{opacity:.38}
+.demo .zone{position:relative;display:flex;flex-wrap:wrap;gap:8px;min-height:120px;padding:6px;margin:-6px;border-radius:16px;outline:2px solid transparent;outline-offset:-2px;transition:background .15s,outline-color .15s}
+.demo .zone.ok{outline:2px dashed var(--accent-line)}
+.demo .zone.hover-ok{outline:2px solid var(--accent);background:rgba(29,99,82,.08)}
+.demo .zone.hover-bad{outline:2px solid var(--warn);background:rgba(180,83,42,.06)}
+.demo .c{cursor:grab;touch-action:none;transition:opacity .18s,transform .18s}
+.demo .c.src{opacity:.3;transform:scale(.96)}
+.demo .c.pop{animation:pop .42s cubic-bezier(.2,.9,.3,1.25)}
+.demo .c.slide{animation:slide .42s cubic-bezier(.2,.8,.2,1) .12s both}
+.demo .gap{flex:0 0 auto;width:96px;aspect-ratio:1/1;border-radius:12px;border:2px dashed var(--accent);background:rgba(29,99,82,.08);animation:grow .2s}
+.demo .free{flex:0 0 auto;width:96px;aspect-ratio:1/1;border-radius:12px;border:2px dashed #D6D0C6;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;color:var(--ink-3)}
+.demo .free b{color:var(--ink)}
+.demo .reason{position:absolute;z-index:3;top:-12px;left:10px;white-space:nowrap;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:600;color:#fff;background:var(--accent);box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.demo .reason.bad{background:var(--warn)}
+.demo .bump{position:absolute;inset:0;display:flex;align-items:flex-end;padding:5px;background:rgba(27,26,23,.45)}
+.demo .bump span{background:#fff;border-radius:999px;padding:2px 6px;font-size:9px;font-weight:600}
+.ghost{position:fixed;left:0;top:0;z-index:50;width:104px;padding:5px;background:#fff;border-radius:14px;box-shadow:0 18px 40px rgba(27,26,23,.28);pointer-events:none;transform-origin:0 0}
+.ghost .ph{width:100%;aspect-ratio:1/1;border-radius:10px;overflow:hidden;background:var(--tile)}
+.ghost .ph img{width:100%;height:100%;object-fit:cover}
+.ghost div{font-size:11px;font-weight:600;padding:5px 2px 0;line-height:1.2}
+.toast{margin-top:10px;min-height:38px;display:flex;align-items:center;font-size:13px;padding:8px 12px;border-radius:10px;background:var(--sunk);color:var(--ink-2);transition:background .2s,color .2s}
+.toast.good{background:var(--ink);color:#fff}
+.toast.bad{background:#9A3F17;color:#fff}
+@keyframes pop{0%{transform:scale(.82);opacity:0}60%{transform:scale(1.05);opacity:1}100%{transform:none}}
+@keyframes slide{from{transform:translateX(-24px) scale(.92);opacity:0}to{transform:none;opacity:1}}
+@keyframes grow{from{width:0;opacity:0}}
+
+/* ---------- engineering ---------- */
+.pipe{display:grid;gap:10px;margin:8px 0 28px}
+@media(min-width:900px){.pipe{grid-template-columns:repeat(5,1fr);align-items:stretch}}
+.node{background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:16px;position:relative}
+.node .num{margin-bottom:8px}
+.node h4{margin:0 0 6px;font-family:var(--display);font-size:17px;letter-spacing:-.01em}
+.node p{margin:0;font-size:13.5px;color:var(--ink-2);line-height:1.5}
+.node.me{background:var(--accent);border-color:var(--accent)}
+.node.me h4,.node.me .num{color:#fff}
+.node.me p{color:#DCEBE5}
+.node .model{display:inline-block;margin-top:10px;font:500 11px var(--mono);background:var(--sunk);border-radius:6px;padding:3px 8px;color:var(--ink-2)}
+.node.me .model{background:rgba(255,255,255,.14);color:#fff}
+@media(min-width:900px){.node:not(:last-child)::after{content:"→";position:absolute;right:-12px;top:50%;transform:translateY(-50%);font:600 14px var(--mono);color:var(--ink-3);z-index:2;background:var(--paper);padding:0 1px}}
+
+.sheet-wrap{overflow-x:auto;border:1px solid var(--rule);border-radius:14px;background:#fff;box-shadow:0 20px 50px rgba(60,50,30,.10)}
+table.xl{border-collapse:collapse;font:12px/1.4 var(--sans);min-width:860px;width:100%}
+.xl th,.xl td{border:1px solid #EAE6DE;padding:7px 9px;text-align:left;vertical-align:top}
+.xl th{background:#F7F5F0;font-weight:600;font-size:11.5px}
+.xl td.n{text-align:right;font-variant-numeric:tabular-nums}
+.xl .pv{background:repeating-linear-gradient(135deg,#FBF4EE,#FBF4EE 6px,#F6ECE3 6px,#F6ECE3 12px);color:#8A5A3C}
+.xl th.pv{color:#8A5A3C}
+.xl .nw{background:#F1F7F4}
+.xl th.nw{color:var(--accent)}
+.xl .alt td:nth-child(3){color:var(--ink-3)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--ink-2);margin-top:12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block;border:1px solid #E6DCCF}
+
+.eng{display:grid;gap:16px;margin-top:40px}
+@media(min-width:760px){.eng{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1000px){.eng{grid-template-columns:repeat(3,1fr)}}
+.eng .card code,.code{font:500 12.5px var(--mono);background:var(--sunk);border-radius:6px;padding:1px 6px;color:var(--ink)}
+pre.code{display:block;padding:16px 18px;border-radius:14px;background:#1B1A17;color:#E9E5DC;overflow-x:auto;font-size:12.5px;line-height:1.6;margin:0}
+pre.code .c1{color:#9C9588}
+pre.code .k1{color:#9CC5B7}
+pre.code .s1{color:#F2C98A}
+
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font:500 13px var(--mono);color:var(--ink-2)}
+.flow span{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:8px 14px}
+.flow em{font-style:normal;color:var(--ink-3)}
+.flow .hl{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent)}
+
+.trust{display:grid;gap:16px}
+@media(min-width:760px){.trust{grid-template-columns:repeat(3,1fr)}}
+.stack{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.stack span{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:6px 14px;font:500 13px var(--mono);color:var(--ink-2)}
+
+.collage{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px}
+.collage figure{margin:0;border-radius:14px;overflow:hidden;aspect-ratio:1/1;background:var(--tile);position:relative}
+.collage img{width:100%;height:100%;object-fit:cover}
+.collage figcaption{position:absolute;left:8px;bottom:8px;background:#fff;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:600}
+@media(max-width:620px){.collage{grid-template-columns:repeat(2,1fr)}}
+
+.tocnav{display:block;padding:0}
+.toc{margin:28px 0 0;padding:18px 0 4px;list-style:none;max-width:460px;border-top:1px solid var(--ink);counter-reset:toc}
+.toc::before{content:"Contents";display:block;font:600 12px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px}
+.toc li{counter-increment:toc}
+.toc a{display:flex;align-items:baseline;gap:8px;padding:7px 0;color:var(--ink);text-decoration:none;font-size:16px}
+.tocnav .toc a .t{white-space:nowrap;font-size:16px;color:var(--ink)}
+.tocnav .toc a .t small{font-size:12px;color:var(--ink-3);font-style:italic;margin-left:6px}
+.toc a .dots{flex:1;border-bottom:2px dotted #C9C2B5;transform:translateY(-5px);min-width:24px}
+.toc a::after{content:counter(toc,decimal-leading-zero);font:500 13px var(--mono);color:var(--accent)}
+.tocnav .toc a:hover .t{color:var(--accent)}
+.toc a:hover .dots{border-color:var(--accent-line)}
+footer{border-top:1px solid var(--rule);padding:32px 0 56px;color:var(--ink-3);font-size:14px}
+footer a{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
+footer a:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <div class="logo"><i><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"></path></svg></i>TrippersX</div>
+    <span>AI trip-planning agents · side business</span>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <div class="pill"><b></b>Agents plan. A person runs the business.</div>
+      <h1>Trip plans your clients enjoy reading. <span>Built by agents, run by me.</span></h1>
+      <nav class="tocnav" aria-label="Contents"><ol class="toc">
+        <li><a href="#how"><span class="t">How it works</span><span class="dots"></span></a></li>
+        <li><a href="#who"><span class="t">Who does what</span><span class="dots"></span></a></li>
+        <li><a href="#clients"><span class="t">What clients see</span><span class="dots"></span></a></li>
+        <li><a href="#demo"><span class="t">Try the drag demo</span><span class="dots"></span></a></li>
+        <li><a href="#dev"><span class="t">Under the hood<small>for developers</small></span><span class="dots"></span></a></li>
+        <li><a href="#build"><span class="t">How I build it<small>for developers</small></span><span class="dots"></span></a></li>
+        <li><a href="#trust"><span class="t">Trust</span><span class="dots"></span></a></li>
+      </ol></nav>
+      <p><b style="color:var(--ink)">TrippersX:</b> AI agents that plan client trips for side income, while I own commercial decisions, relationships and execution.</p>
+      <p style="font-size:17px;margin-top:14px">I'm an avid traveller and travel photographer. TrippersX is built on the same methods and planning structure I've used to plan all my own and my friends' travels, now run by agents.</p>
+      <div class="stats">
+        <div><strong>3 agents</strong>plan, work out earnings, publish</div>
+        <div><strong>1 workbook</strong>carries the whole trip between them</div>
+      </div>
+    </div>
+
+    <!-- Phone: the trip timeline -->
+    <figure style="margin:0">
+      <div class="phone" role="img" aria-label="The trip page on a phone: Hampi, day tabs, and rows of photo cards for morning, afternoon and evening">
+        <div class="screen ui" style="padding:16px 14px">
+          <div class="k">Your trip · Fri 4 – Sun 6 Dec</div>
+          <div class="place" style="font-size:40px;margin:6px 0 4px">Hampi</div>
+          <div style="font-size:12px;color:var(--ink-2);margin-bottom:8px">3 days · 4 friends · self-drive from Bangalore</div>
+          <div class="chips"><span class="chip">Boys trip</span><span class="chip">Adventures</span><span class="chip">Car drive</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;margin:10px 0 4px"><b>₹41,720 estimated</b><span style="color:var(--ink-3)">Budget ₹40,000</span></div>
+          <div style="height:4px;border-radius:9px;background:var(--rule);overflow:hidden"><div style="width:100%;height:100%;background:var(--warn)"></div></div>
+          <div class="tabs" style="margin-top:10px"><span class="tab">Before<b>To book</b></span><span class="tab">Fri 4<b>Day 1</b></span><span class="tab" style="border-color:var(--accent)">Sat 5<b>Day 2</b></span><span class="tab">Sun 6<b>Day 3</b></span></div>
+          <div class="place" style="font-size:24px;margin:12px 0 2px">Hampi &amp; Daroji</div>
+          <div style="font-size:11px;color:var(--ink-3);margin-bottom:6px"><b style="color:var(--ink)">Day 2</b> · Saturday, 5 Dec · Boulders, crocs and bears</div>
+          <div class="row"><div class="lab">Morning<small>6 AM – 12 PM</small><span class="meter"><i style="width:67%"></i></span></div>
+            <div class="cards">
+              <div class="c"><div class="ph"><img src="https://upload.wikimedia.org/wikipedia/commons/9/98/Bouldering.jpg" alt="" loading="lazy"></div><div class="t">Climb Hampi's boulders</div><div class="m">₹1,000 each</div></div>
+              <div class="c"><div class="ph"><img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Idli_Sambar.JPG" alt="" loading="lazy"></div><div class="t">Breakfast at the hostel</div><div class="m">₹175 each</div></div>
+            </div></div>
+          <div class="row"><div class="lab">Afternoon<small>12 – 6 PM</small><span class="meter"><i style="width:83%"></i></span></div>
+            <div class="cards">
+              <div class="c"><div class="ph"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Gagan_Mahal_palace%2C_Anegundi.jpg/500px-Gagan_Mahal_palace%2C_Anegundi.jpg" alt="" loading="lazy"></div><div class="t">Lunch in Anegundi</div><div class="m">₹225 each</div></div>
+              <div class="c"><div class="ph"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/MelursusUrsinusFemaleCub.jpg/500px-MelursusUrsinusFemaleCub.jpg" alt="" loading="lazy"></div><div class="t">See sloth bears at Daroji</div><div class="m">₹675 each</div></div>
+            </div></div>
+        </div>
+      </div>
+      <figcaption class="caption">The client page for a real test trip: a boys' road trip to Hampi.</figcaption>
+    </figure>
+  </header>
+
+  <section id="how">
+    <div class="eyebrow">How it works</div>
+    <h2>From a five-line brief to a page the group can play with</h2>
+    <p class="lede">Planning a trip well takes hours of tabs: prices, opening times, drive times, photos and backup options. The agents do that legwork. I check it, book it and talk to the client.</p>
+    <div class="steps">
+      <div class="card"><span class="num">01 · Brief</span><h3>Tell it the trip</h3><p>Place, dates, travellers, budget and up to three mood words, like <i>honeymoon, relax, scuba</i> or <i>boys trip, adventures, car drive</i>.</p></div>
+      <div class="card"><span class="num">02 · Plan</span><h3>Agent 1 researches and plans</h3><p>Live prices, opening hours and drive times, turned into a day-by-day plan with a cheaper and a similar option for the big items.</p></div>
+      <div class="card"><span class="num">03 · Earn</span><h3>Agent 2 works out my cut</h3><p>Card cashback and agent rates, row by row. Plain code, no AI, and it stays private.</p></div>
+      <div class="card"><span class="num">04 · Publish</span><h3>Agent 3 makes the page</h3><p>Strips every private field, checks nothing leaked, and publishes the trip page the client opens and rearranges.</p></div>
+    </div>
+  </section>
+
+  <section id="who">
+    <div class="eyebrow">Who does what</div>
+    <h2>The agents do the legwork. The business stays mine.</h2>
+    <p class="lede">The split is deliberate: everything repeatable goes to the agents, and everything that needs judgement, trust or a signature stays with a person.</p>
+    <div class="split">
+      <div class="card">
+        <h3>The agents handle</h3>
+        <ul>
+          <li>Researching prices, opening hours and drive times</li>
+          <li>Building a day-by-day plan inside the budget</li>
+          <li>Offering a cheaper and a similar option for big items</li>
+          <li>Writing short, mood-matched descriptions and finding photos</li>
+          <li>Working out card cashback and agent-rate earnings per booking</li>
+          <li>Publishing a clean page with no private numbers on it</li>
+        </ul>
+      </div>
+      <div class="card you">
+        <h3>I handle</h3>
+        <ul>
+          <li>Commercial calls: which offers to chase, what to charge</li>
+          <li>Talking to clients and to hotels and operators for agent rates</li>
+          <li>Checking the plan, and every price before paying</li>
+          <li>Booking, paying and keeping receipts</li>
+          <li>Being the person they call when something goes wrong</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="clients">
+    <div class="eyebrow">For travellers</div>
+    <h2>What your clients see</h2>
+    <p class="lede">The first version was a spreadsheet turned into a page, and it read like one. The redesign starts from how people actually plan: by day, by time of day, with pictures, and with room to change their minds.</p>
+
+    <div class="feature">
+      <div class="browser" role="img" aria-label="Desktop view of a day with morning, afternoon and evening rows of square photo cards and a dashed options box">
+        <div class="bar"><i></i><i></i><i></i><span>/t/hampi-bois</span></div>
+        <div class="body ui">
+          <div class="place" style="font-size:30px">Hampi</div>
+          <div style="font-size:12px;color:var(--ink-3);margin:4px 0 10px"><b style="color:var(--ink)">Day 1</b> · Friday, 4 Dec · Night drive in, ruins and a hilltop sunset</div>
+          <div class="row"><div class="lab">Morning<small>8 AM – 12 PM</small><span class="meter"><i style="width:50%"></i></span></div>
+            <div class="cards">
+              <div class="c"><div class="ph"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Masala_Dosa_2023.jpg/500px-Masala_Dosa_2023.jpg" alt="" loading="lazy"></div><div class="t">Breakfast by the river</div><div class="m">₹175 each</div></div>
+              <div class="c"><div class="ph"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Hampi%2C_Tungabhadra_River%2C_India.jpg/500px-Hampi%2C_Tungabhadra_River%2C_India.jpg" alt="" loading="lazy"><span class="tag">Fixed</span></div><div class="t">Check in at Zostel</div><div class="m">₹2,350 each</div></div>
+              <div class="opts"><div class="h">Options · 2</div><div style="display:flex;gap:6px">
+                <div class="c"><div class="ph"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Hampi%2C_Tungabhadra_River%2C_India.jpg/500px-Hampi%2C_Tungabhadra_River%2C_India.jpg" alt="" loading="lazy"><span class="tag">Similar</span></div><div class="t">Zostel Superior</div></div>
+                <div class="c"><div class="ph" style="background:#CFC6B6"><span class="tag gold">Cheaper</span></div><div class="t">Hotel Mayura</div></div>
+              </div></div>
+            </div></div>
+          <div class="row"><div class="lab">Afternoon<small>12 – 6 PM</small><span class="meter"><i style="width:83%"></i></span></div>
+            <div class="cards"><div class="c"><div class="ph"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Wide_angle_of_Galigopuram_of_Virupaksha_Temple%2C_Hampi_%2804%29_%28cropped%29.jpg/500px-Wide_angle_of_Galigopuram_of_Virupaksha_Temple%2C_Hampi_%2804%29_%28cropped%29.jpg" alt="" loading="lazy"></div><div class="t">Lunch at Hampi Bazaar</div><div class="m">₹225 each</div></div><div class="c"><div class="ph"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Hampi%2C_Vittala_Temple%2C_chariot_%289881832023%29.jpg/500px-Hampi%2C_Vittala_Temple%2C_chariot_%289881832023%29.jpg" alt="" loading="lazy"></div><div class="t">Explore Vittala Temple</div><div class="m">₹80 each</div></div></div></div>
+          <div class="row"><div class="lab">Evening<small>6 – 9 PM</small><span class="meter"><i style="width:83%"></i></span></div>
+            <div class="cards"><div class="c"><div class="ph"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Panorama_of_Hampi_from_Anjaneyadri_hill.jpg/500px-Panorama_of_Hampi_from_Anjaneyadri_hill.jpg" alt="" loading="lazy"></div><div class="t">Sunset at Anjanadri Hill</div><div class="m">₹275 each</div></div></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="eyebrow">Read it like a trip</div>
+        <h3>One row per part of the day, one card per thing to do</h3>
+        <p>Each day leads with the place, then morning, afternoon, evening and night. Every plan item is a square photo card with a short verb-first title.</p>
+        <ul><li>Titles like "Sunset at Anjaneya Hill", not paragraphs</li><li>Price per person on every card</li><li>Hotels and drives marked Fixed so nobody drags them by accident</li><li>Cheaper and similar choices wait in a dashed Options box</li></ul>
+      </div>
+    </div>
+
+    <div class="feature flip">
+      <div>
+        <div class="demo ui" id="demo" aria-label="Interactive demo: drag cards between time slots">
+          <div class="top"><b>Try it: drag a card</b><button type="button" id="demo-reset">Reset</button></div>
+          <div id="demo-rows"></div>
+          <div class="toast" id="demo-toast" role="status">Drag "See sloth bears" to the night, or "Explore Vittala" into Saturday afternoon.</div>
+        </div>
+        <p class="caption">A working cut-down copy of the page's rules, running on the Hampi data.</p>
+      </div>
+      <div>
+        <div class="eyebrow">Rearrange without breaking it</div>
+        <h3>Drag things around. The plan still has to be possible.</h3>
+        <p>Every event knows its <b>safe time window</b>: opening hours, the drive from the hotel and how long people usually spend there. So the page knows the sloth bear sanctuary only works on an afternoon and needs about four hours.</p>
+        <ul><li>Times it can't happen fade out while you drag, with the reason</li><li>Drop into a full slot and the cards that no longer fit slide into Options</li><li>The total and budget bar update as you go</li><li>Every move can be undone; hold a card to drag on a phone</li></ul>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div class="phone" role="img" aria-label="Quick view of the Daroji sloth bear sanctuary card, with description, opening hours, time needed and buttons">
+        <div class="screen ui">
+          <div style="padding:16px 14px;opacity:.5">
+            <div class="place" style="font-size:24px">Hampi &amp; Daroji</div>
+            <div class="row" style="margin-top:10px"><div class="lab">Afternoon</div><div class="cards"><div class="c"><div class="ph"></div></div><div class="c"><div class="ph"></div></div></div></div>
+          </div>
+          <div class="scrim"></div>
+          <div class="qv">
+            <div class="hero-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/MelursusUrsinusFemaleCub.jpg/960px-MelursusUrsinusFemaleCub.jpg" alt="" loading="lazy"></div>
+            <div class="in">
+              <span style="font-size:11px;color:var(--ink-3)">In your plan · Day 2 · Afternoon</span>
+              <h4>See sloth bears at Daroji</h4>
+              <div class="chips"><span class="chip">Adventures</span><span class="chip">Car drive</span></div>
+              <p>Jeep in to the watchtower and wait for sloth bears to amble out at golden hour. Binoculars make this one.</p>
+              <div class="facts"><div>Open<b>2 – 6 PM, bears late afternoon</b></div><div>Needs<b>About 4 h, incl. travel</b></div><div>From base<b>About 1 hr each way</b></div><div>Can happen in<b>Afternoon</b></div></div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline"><b style="font-size:16px">₹2,700 for 4</b><span style="font-size:11px;color:var(--ink-3)">₹675 each</span></div>
+              <div class="btns"><span style="background:var(--accent);color:#fff">Move to options</span><span style="border:1px solid #D6D0C6">Open in Maps</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="eyebrow">Tap for the details</div>
+        <h3>A quick look written in the trip's own voice</h3>
+        <p>Tap any card for a bigger photo and a short description in the mood the group asked for. A boys' road trip reads differently from a honeymoon.</p>
+        <ul><li>When it's open and how long it really takes</li><li>Two or three practical tips, no wall of text</li><li>Cost for the group and per person</li><li>Every drag move also works from buttons here</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="dev">
+    <div class="eyebrow">Under the hood · for developers</div>
+    <h2>Three agents, one contract, and a person in the loop</h2>
+    <p class="lede">The system is a Next.js app on Vercel. The agents never talk to each other directly. They read and write one itinerary workbook in a fixed, versioned format, so every step can be checked, replayed, or opened in Excel by a human.</p>
+
+    <div class="pipe">
+      <div class="node me"><span class="num">INPUT</span><h4>Brief</h4><p>I enter place, dates, travellers, budget, 1–3 mood words and notes in <code style="background:rgba(255,255,255,.14);color:#fff;border-radius:4px;padding:0 4px">/admin</code>.</p><span class="model">human</span></div>
+      <div class="node"><span class="num">AGENT 1</span><h4>Research + plan</h4><p>A cheap model searches the web and caches a compact price list; a strong model writes the plan from it.</p><span class="model">Haiku → Opus</span></div>
+      <div class="node"><span class="num">AGENT 2</span><h4>Your cut</h4><p>Picks the best card or booking route per row and fills the private earnings columns.</p><span class="model">plain code</span></div>
+      <div class="node"><span class="num">AGENT 3</span><h4>Publish</h4><p>Re-validates, strips private fields, refuses to publish if earnings wording leaks.</p><span class="model">plain code</span></div>
+      <div class="node me"><span class="num">LOOP</span><h4>Client picks</h4><p>The group rearranges and sends their picks back. I review, book and pay.</p><span class="model">human</span></div>
+    </div>
+
+    <h3 style="font-size:22px;margin:44px 0 6px">The workbook is the message</h3>
+    <p class="lede" style="margin-bottom:20px">One sheet carries the trip. Alternatives are rows starting with ↳. Agent 2's columns are private and never leave the planner. Version 2.0 of the contract adds the fields the new page needs: card titles, time windows and allowed slots.</p>
+    <div class="sheet-wrap" role="img" aria-label="Excerpt of the itinerary workbook with public, private and new columns">
+      <table class="xl">
+        <thead><tr><th>Date</th><th>Time</th><th>Itinerary</th><th>Cost (INR)</th><th class="pv">Returns</th><th class="pv">Cut %</th><th class="nw">Card title</th><th class="nw">Can happen in</th><th class="nw">Needs (hrs)</th><th class="nw">Locked</th></tr></thead>
+        <tbody>
+          <tr><td>Fri 4 Dec</td><td>O</td><td>Leave Bangalore about 1:00 AM, NH-48 via Chitradurga… petrol for the whole trip</td><td class="n">5,700</td><td class="pv"></td><td class="pv"></td><td class="nw">Drive to Hampi</td><td class="nw">O</td><td class="nw n">7</td><td class="nw">Yes</td></tr>
+          <tr><td></td><td>M</td><td>Zostel Hampi (Gangavathi): 4 beds, 2 nights…</td><td class="n">9,400</td><td class="pv"></td><td class="pv"></td><td class="nw">Check in at Zostel</td><td class="nw">M</td><td class="nw n">2</td><td class="nw">Yes</td></tr>
+          <tr class="alt"><td></td><td>M</td><td>↳ Cheaper: KSTDC Hotel Mayura dorm, ₹400 a bed + GST…</td><td class="n">3,600</td><td class="pv"></td><td class="pv"></td><td class="nw">Stay at Hotel Mayura</td><td class="nw">M</td><td class="nw n">2</td><td class="nw">Yes</td></tr>
+          <tr><td>Sat 5 Dec</td><td>M</td><td>Bouldering, 7:30–10:00 AM with instructor and gear…</td><td class="n">4,000</td><td class="pv"></td><td class="pv"></td><td class="nw">Climb Hampi's boulders</td><td class="nw">M, E</td><td class="nw n">3</td><td class="nw"></td></tr>
+          <tr><td></td><td>A</td><td>Daroji Sloth Bear Sanctuary, gate open 2–6 PM…</td><td class="n">2,700</td><td class="pv"></td><td class="pv"></td><td class="nw">See sloth bears at Daroji</td><td class="nw">A</td><td class="nw n">4</td><td class="nw"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="legend"><span><i style="background:#fff"></i>Public</span><span><i class="pv" style="background:repeating-linear-gradient(135deg,#FBF4EE,#FBF4EE 3px,#F6ECE3 3px,#F6ECE3 6px)"></i>Private, planner only (filled by Agent 2)</span><span><i style="background:#F1F7F4"></i>New in contract v2.0</span></div>
+
+    <div class="eng">
+      <div class="card"><span class="num">Contract first</span><h3>A workbook, not a chat log</h3><p>Every agent reads and writes the same versioned format, found by anchor text, not row numbers. Validation runs after every step: headers, alternatives, totals, dates. Breaking changes get a new version.</p></div>
+      <div class="card"><span class="num">Token budget</span><h3>Cheap model searches, strong model plans</h3><p>Web results only go to the small research model, which saves a short price list cached for 7 days per destination, month and mood. The planner never sees raw search results.</p></div>
+      <div class="card"><span class="num">Fix, don't re-ask</span><h3>Mechanical slips fixed in code</h3><p>Day order, labels and duplicate dates are repaired in code. Only real planning errors (over budget, wrong dates, a slot that can't fit) go back to the model, because each redo rewrites the whole plan.</p></div>
+      <div class="card"><span class="num">No AI where it isn't needed</span><h3>Earnings are plain arithmetic</h3><p>Agent 2 is ordinary code over a card and route config: cashback minus forex markup plus any agent rate. It reports a sure lower end and an upside, and drops anything under ₹300.</p></div>
+      <div class="card"><span class="num">Privacy gate</span><h3>Nothing private gets published</h3><p>Agent 3 strips the earnings columns and private summary rows, then scans the result for earnings wording and refuses to publish if anything slipped through.</p></div>
+      <div class="card"><span class="num">Rules engine</span><h3>Time windows as pure functions</h3><p>The drag-and-drop page runs on two small functions, <code>check</code> and <code>simulate</code>, with unit tests written from the real trip. The same rules validate the planner's output.</p></div>
+    </div>
+
+    <div class="feature" id="build" style="padding-top:56px">
+      <pre class="code" aria-label="Code excerpt: the check function"><span class="c1">// Can this card go into this day and time slot?</span>
+<span class="k1">function</span> check(card, slot) {
+  <span class="k1">if</span> (card.locked &amp;&amp; slot !== card.home)
+    <span class="k1">return</span> no(<span class="s1">`Fixed to ${label(card.home)}`</span>);
+  <span class="k1">if</span> (overlap(slot) === 0)
+    <span class="k1">return</span> no(<span class="s1">"You're on the road then"</span>);
+  <span class="k1">if</span> (!card.canHappenIn.includes(slot.code))
+    <span class="k1">return</span> no(<span class="s1">`Not in the ${slot.word} · ${card.openHours}`</span>);
+  <span class="k1">if</span> (card.needsHrs &gt; free(slot, { without: card }))
+    <span class="k1">return</span> no(<span class="s1">`Needs ${card.needsHrs} h · ${free(slot)} h free here`</span>);
+  <span class="k1">return</span> ok();
+}
+
+<span class="c1">// free = (slot window ∩ hours at the destination)
+//        − fixed items already in that slot</span></pre>
+      <div>
+        <div class="eyebrow">How I build it</div>
+        <h3>I direct the agents that write the code, too</h3>
+        <p>I rarely hand-write code now. I work as the product owner and reviewer: design with Claude on a canvas, turn the decisions into a written spec, and hand that to Claude Code to build in reviewed phases.</p>
+        <ul><li>Mockups built on the real trip data, not lorem ipsum</li><li>A handoff spec with the contract, rules and expected test results</li><li>Claude Code shows a plan first, then builds one phase per commit</li><li>I review each phase against the spec and the live mockup</li></ul>
+      </div>
+    </div>
+    <div class="flow" style="margin-top:8px">
+      <span>Idea</span><em>→</em><span>Claude · design canvas</span><em>→</em><span>Spec + test data</span><em>→</em><span class="hl">Claude Code · phased build</span><em>→</em><span>My review</span><em>→</em><span>Vercel</span>
+    </div>
+  </section>
+
+  <section id="trust">
+    <div class="eyebrow">Trust</div>
+    <h2>Estimates the client can rely on</h2>
+    <p class="lede">A plan that looks finished but isn't bookable is worse than no plan. A few rules keep it honest.</p>
+    <div class="trust">
+      <div class="card"><h3>Every price is a checked estimate</h3><p>Prices come from live research with sources, and the page says so. I check each booking page before paying. One review caught a ₹9,000 car rental missing from a total, which is exactly why a person signs off.</p></div>
+      <div class="card"><h3>Possible, not just pretty</h3><p>Opening hours, drive times and realistic durations mean the day actually fits. Wildlife after dark or a climb in the midday heat simply can't be scheduled.</p></div>
+      <div class="card"><h3>My earnings stay on my side</h3><p>Cashback and agent rates are worked out for me and never shown to the client. They pay the public price; what I earn comes from cards and operators, not from padding their plan.</p></div>
+    </div>
+    <div class="collage" aria-label="Photos from the Hampi test trip">
+      <figure><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/View_of_the_Virupaksha_temple_gopura_from_Hemakuta_hill_2.JPG/500px-View_of_the_Virupaksha_temple_gopura_from_Hemakuta_hill_2.JPG" alt="Virupaksha temple tower seen from Hemakuta hill" loading="lazy"><figcaption>Virupaksha</figcaption></figure>
+      <figure><img src="https://upload.wikimedia.org/wikipedia/commons/9/98/Bouldering.jpg" alt="A climber on a boulder" loading="lazy"><figcaption>Bouldering</figcaption></figure>
+      <figure><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Tungabhadra_dam_all_gates_open.jpg/500px-Tungabhadra_dam_all_gates_open.jpg" alt="Tungabhadra dam with all gates open" loading="lazy"><figcaption>Tungabhadra Dam</figcaption></figure>
+      <figure><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Panorama_of_Hampi_from_Anjaneyadri_hill.jpg/500px-Panorama_of_Hampi_from_Anjaneyadri_hill.jpg" alt="Hampi seen from Anjanadri Hill" loading="lazy"><figcaption>Anjanadri Hill</figcaption></figure>
+    </div>
+    <div class="stack"><span>Next.js</span><span>Vercel</span><span>Postgres</span><span>Claude Opus · planner</span><span>Claude Haiku · research</span><span>Web search</span><span>.xlsx contract v2.0</span><span>Wikipedia photos</span><span>Apps Script inbox</span><span>Claude Code</span></div>
+  </section>
+
+  <footer>TrippersX · built by <a href="https://priyadharshansaba.github.io/">Priyadharshan Saba</a> · Photos: Wikimedia Commons</footer>
+</div>
+
+<script>
+/* Cut-down copy of the trip page's rules, on the Hampi data. */
+(function () {
+  var IMG = {
+    vittala: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Hampi%2C_Vittala_Temple%2C_chariot_%289881832023%29.jpg/500px-Hampi%2C_Vittala_Temple%2C_chariot_%289881832023%29.jpg",
+    bazaar: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Wide_angle_of_Galigopuram_of_Virupaksha_Temple%2C_Hampi_%2804%29_%28cropped%29.jpg/500px-Wide_angle_of_Galigopuram_of_Virupaksha_Temple%2C_Hampi_%2804%29_%28cropped%29.jpg",
+    lunch: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Gagan_Mahal_palace%2C_Anegundi.jpg/500px-Gagan_Mahal_palace%2C_Anegundi.jpg",
+    croc: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Mugger_crocodile_%28Crocodylus_palustris%29_Gal_Oya.jpg/500px-Mugger_crocodile_%28Crocodylus_palustris%29_Gal_Oya.jpg",
+    bear: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/MelursusUrsinusFemaleCub.jpg/500px-MelursusUrsinusFemaleCub.jpg"
+  };
+  var CARDS = {
+    vittala: { t: "Explore Vittala Temple", img: IMG.vittala, hrs: 4, slots: ["A"], open: "8:30 AM – 5:30 PM", kind: "activity" },
+    bazaar: { t: "Lunch at Hampi Bazaar", img: IMG.bazaar, hrs: 1, slots: ["A"], open: "11 AM – 3 PM", kind: "meal" },
+    lunch: { t: "Lunch in Anegundi", img: IMG.lunch, hrs: 1, slots: ["A"], open: "11:30 AM – 3 PM", kind: "meal" },
+    bear: { t: "See sloth bears at Daroji", img: IMG.bear, hrs: 4, slots: ["A"], open: "2 – 6 PM, bears late afternoon", kind: "activity" }
+  };
+  var ROWS = [
+    { key: "d1a", label: "Fri · Afternoon", hint: "12 – 6 PM", code: "A", free: 6 },
+    { key: "d2a", label: "Sat · Afternoon", hint: "12 – 6 PM", code: "A", free: 6 },
+    { key: "d2n", label: "Sat · Night", hint: "9 PM – 12", code: "N", free: 3 }
+  ];
+  var INIT = { d1a: { plan: ["bazaar", "vittala"], opts: [] }, d2a: { plan: ["lunch", "bear"], opts: [] }, d2n: { plan: [], opts: [] } };
+  var state = JSON.parse(JSON.stringify(INIT)), anim = null, drag = null, hover = null;
+  var rowsEl = document.getElementById("demo-rows"), toastEl = document.getElementById("demo-toast");
+  var rowBy = function (k) { return ROWS.filter(function (r) { return r.key === k; })[0]; };
+  var used = function (k, st) { return st[k].plan.reduce(function (a, id) { return a + CARDS[id].hrs; }, 0); };
+  var where = function (id) { for (var k in state) { if (state[k].plan.indexOf(id) > -1) return { key: k, zone: "plan" }; if (state[k].opts.indexOf(id) > -1) return { key: k, zone: "opts" }; } };
+  var fmt = function (h) { return String(Math.round(h * 10) / 10); };
+
+  function check(id, k) {
+    var c = CARDS[id], r = rowBy(k);
+    if (c.slots.indexOf(r.code) < 0) return { ok: false, why: "Not at night · " + c.open };
+    var st = JSON.parse(JSON.stringify(state));
+    for (var x in st) st[x].plan = st[x].plan.filter(function (i) { return i !== id; });
+    var free = r.free;
+    if (c.hrs > free) return { ok: false, why: "Needs " + fmt(c.hrs) + " h · " + fmt(free) + " h free" };
+    return { ok: true };
+  }
+  function simulate(id, k, idx) {
+    var st = JSON.parse(JSON.stringify(state));
+    for (var x in st) { st[x].plan = st[x].plan.filter(function (i) { return i !== id; }); st[x].opts = st[x].opts.filter(function (i) { return i !== id; }); }
+    var plan = st[k].plan; plan.splice(Math.min(idx, plan.length), 0, id);
+    var others = plan.filter(function (i) { return i !== id; });
+    var order = others.filter(function (i) { return CARDS[i].kind !== "meal"; }).reverse().concat(others.filter(function (i) { return CARDS[i].kind === "meal"; }).reverse());
+    var u = used(k, st), bumped = [];
+    for (var j = 0; j < order.length && u > rowBy(k).free; j++) { bumped.push(order[j]); u -= CARDS[order[j]].hrs; }
+    st[k].plan = plan.filter(function (i) { return bumped.indexOf(i) < 0; });
+    st[k].opts = bumped.concat(st[k].opts);
+    return { st: st, bumped: bumped };
+  }
+  function cardHTML(id, extra, small) {
+    var c = CARDS[id];
+    return '<div class="c ' + (extra || "") + '" data-id="' + id + '" style="' + (small ? "width:84px" : "") + '"><div class="ph"><img src="' + c.img + '" alt="" draggable="false">' +
+      (small ? '<span class="tag dark">Moved out</span>' : "") + (hover && hover.prev && hover.prev.bumped.indexOf(id) > -1 && hover.key === where(id).key ? '<span class="bump"><span>Moves to options</span></span>' : "") +
+      '</div><div class="t">' + c.t + '</div><div class="m">' + fmt(c.hrs) + ' h</div></div>';
+  }
+  function render() {
+    rowsEl.innerHTML = ROWS.map(function (r) {
+      var v = drag ? check(drag.id, r.key) : null, isH = hover && hover.key === r.key;
+      var zoneCls = drag ? (isH ? (v.ok ? "hover-ok" : "hover-bad") : (v.ok ? "ok" : "")) : "";
+      var ids = state[r.key].plan.slice(), parts = [];
+      if (isH && v.ok) ids = ids.filter(function (i) { return i !== drag.id; });
+      ids.forEach(function (id) {
+        var cls = drag && drag.id === id ? "src" : (anim && anim.dropped === id ? "pop" : "");
+        parts.push(cardHTML(id, cls));
+      });
+      if (isH && v.ok) parts.splice(Math.min(hover.idx, parts.length), 0, '<span class="gap"></span>');
+      if (!parts.length) parts.push('<span class="free"><b>Free time</b>' + fmt(r.free) + ' h free</span>');
+      var pill = isH ? '<span class="reason ' + (v.ok ? "" : "bad") + '">' + (v.ok ? (hover.prev.bumped.length ? "Fits · " + hover.prev.bumped.length + " moves to options" : "Fits · uses " + fmt(CARDS[drag.id].hrs) + " of " + fmt(r.free) + " h") : v.why) + '</span>' : "";
+      var opts = state[r.key].opts.length ? '<div class="opts"><div class="h">Options</div><div style="display:flex;gap:6px">' + state[r.key].opts.map(function (id) { return cardHTML(id, anim && anim.bumped.indexOf(id) > -1 ? "slide" : "", true); }).join("") + '</div></div>' : "";
+      var u = used(r.key, state);
+      return '<div class="row ' + (drag && !v.ok && !isH ? "dim" : "") + '"><div class="lab">' + r.label + '<small>' + r.hint + '</small><span class="meter"><i style="width:' + Math.min(100, u / r.free * 100) + '%"></i></span><small>' + fmt(u) + ' of ' + fmt(r.free) + ' h</small></div>' +
+        '<div style="display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;min-width:0;flex:1"><div class="zone ' + zoneCls + '" data-key="' + r.key + '">' + pill + parts.join("") + '</div>' + opts + '</div></div>';
+    }).join("");
+  }
+  function say(t, kind) { toastEl.textContent = t; toastEl.className = "toast " + (kind || ""); }
+  var ghost = null;
+  function hitTest(x, y) {
+    var el = document.elementFromPoint(x, y), z = el && el.closest ? el.closest("#demo .zone") : null;
+    if (!z) return null;
+    var k = z.getAttribute("data-key"), idx = 0, ids = state[k].plan.filter(function (i) { return i !== drag.id; });
+    z.querySelectorAll(".c").forEach(function (c) { var id = c.getAttribute("data-id"), rc = c.getBoundingClientRect(); if (id !== drag.id && rc.left + rc.width / 2 < x) idx = Math.max(idx, ids.indexOf(id) + 1); });
+    var v = check(drag.id, k);
+    return { key: k, idx: idx, v: v, prev: v.ok ? simulate(drag.id, k, idx) : null };
+  }
+  rowsEl.addEventListener("pointerdown", function (e) {
+    var c = e.target.closest(".c"); if (!c || e.button > 0) return;
+    var id = c.getAttribute("data-id"), rc = c.getBoundingClientRect();
+    drag = { id: id, sx: e.clientX, sy: e.clientY, fx: (e.clientX - rc.left) / rc.width, fy: (e.clientY - rc.top) / rc.width, rx: rc.left, ry: rc.top, rw: rc.width, on: false };
+    e.preventDefault();
+  });
+  window.addEventListener("pointermove", function (e) {
+    if (!drag) return;
+    if (!drag.on) {
+      if (Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) < 6) return;
+      drag.on = true; anim = null;
+      ghost = document.createElement("div"); ghost.className = "ghost";
+      ghost.innerHTML = '<div class="ph"><img src="' + CARDS[drag.id].img + '" alt=""></div><div>' + CARDS[drag.id].t + '</div>';
+      document.body.appendChild(ghost);
+    }
+    ghost.style.transform = "translate(" + (e.clientX - drag.fx * 104) + "px," + (e.clientY - drag.fy * 104) + "px) rotate(-3deg) scale(1.04)";
+    var h = hitTest(e.clientX, e.clientY);
+    var same = (!h && !hover) || (h && hover && h.key === hover.key && h.idx === hover.idx);
+    if (!same || !drag.rendered) { hover = h; drag.rendered = true; render(); }
+  });
+  window.addEventListener("pointerup", function (e) {
+    if (!drag) return;
+    var d = drag;
+    if (!d.on) { drag = null; return; }
+    var h = hitTest(e.clientX, e.clientY);
+    if (h && h.v.ok) {
+      state = h.prev.st; anim = { dropped: d.id, bumped: h.prev.bumped };
+      say("Moved “" + CARDS[d.id].t + "” to " + rowBy(h.key).label + (h.prev.bumped.length ? " · " + h.prev.bumped.length + " moved to options" : ""), "good");
+      ghost.remove(); ghost = null; drag = null; hover = null; render();
+    } else {
+      if (h) say(h.v.why, "bad");
+      ghost.style.transition = "transform 280ms cubic-bezier(.2,.8,.2,1), opacity 280ms";
+      ghost.style.transform = "translate(" + d.rx + "px," + d.ry + "px) scale(" + (d.rw / 104) + ")"; ghost.style.opacity = ".35";
+      var g = ghost; ghost = null; setTimeout(function () { g.remove(); }, 290);
+      drag = null; hover = null; render();
+    }
+  });
+  document.getElementById("demo-reset").addEventListener("click", function () { state = JSON.parse(JSON.stringify(INIT)); anim = null; say("Drag \"See sloth bears\" to the night, or \"Explore Vittala\" into Saturday afternoon."); render(); });
+  render();
+})();
+</script>
+</body>
+</html>
