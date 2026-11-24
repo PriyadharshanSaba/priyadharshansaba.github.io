@@ -81,7 +81,21 @@ section h2{font-size:clamp(28px,4.4vw,40px);line-height:1.15}
 .stack{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
 .stack span{background:var(--sunk);border:1px solid var(--rule);border-radius:8px;padding:6px 14px;font:500 13px var(--mono);color:var(--ink-2)}
 
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:460px;margin:0 auto}
+.duo .shot{border-radius:14px}
+@media(min-width:820px){.feature.flip .duo{order:2}}
+
+.private{display:grid;gap:16px}
+@media(min-width:760px){.private{grid-template-columns:repeat(2,1fr)}}
+.private .card h3::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--good);margin-right:10px;vertical-align:3px}
+.flow{margin-top:28px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;font:500 13px var(--mono);color:var(--ink-2)}
+.flow span{background:var(--sunk);border:1px solid var(--rule);border-radius:8px;padding:8px 14px}
+.flow em{font-style:normal;color:var(--ink-3)}
+.flow .no{text-decoration:line-through;color:var(--ink-3)}
+
 footer{border-top:1px solid var(--rule);padding:32px 0 56px;color:var(--ink-3);font-size:14px}
+footer a{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
+footer a:hover{color:var(--accent)}
 </style>
 </head>
 <body>
@@ -99,7 +113,7 @@ footer{border-top:1px solid var(--rule);padding:32px 0 56px;color:var(--ink-3);f
         <div><strong>One tap</strong>when it needs your call</div>
       </div>
     </div>
-    <img class="shot" src="img/month.png" alt="Paisa month view in private mode: total spent, living versus investments, daily pace and a card bill reminder">
+    <img class="shot" src="img/screens/month.png" alt="Paisa month view: total spent, living versus investments and daily pace">
   </header>
 
   <section>
@@ -144,45 +158,44 @@ footer{border-top:1px solid var(--rule);padding:32px 0 56px;color:var(--ink-3);f
   <section>
     <div class="eyebrow">In your life</div>
     <h2>What it does for you</h2>
-    <p class="lede">Screens shown in private mode, with every figure and name masked.</p>
 
     <div class="feature">
-      <img class="shot" src="img/month.png" alt="This month tab" loading="lazy">
+      <div class="duo"><img class="shot" src="img/screens/month.png" alt="This month: spending, pace and rewards" loading="lazy"><img class="shot" src="img/screens/rewards.png" alt="Rewards earned, used and left" loading="lazy"></div>
       <div>
         <div class="eyebrow">Daily habits</div>
         <h3>See your spending habits every day</h3>
-        <p>One clear number for what's gone out this month, split into living costs and investments, with your daily pace measured against the budget.</p>
-        <ul><li>On track or over, for each day of the month</li><li>Money you're owed, still outstanding</li><li>Card bills flagged before they're due</li></ul>
+        <p>What went out this month, split into living and investments, measured against your budget.</p>
+        <ul><li>Where the month will end at today's pace</li><li>How much a day you can still spend</li><li>What rewards paid for, and what came from your pocket</li></ul>
       </div>
     </div>
 
     <div class="feature flip">
-      <img class="shot" src="img/goals.png" alt="Goals tab" loading="lazy">
+      <div class="duo"><img class="shot" src="img/screens/goal.png" alt="A goal with holdings and suggestions" loading="lazy"><img class="shot" src="img/screens/goal-new.png" alt="A new goal with suggestions" loading="lazy"></div>
       <div>
         <div class="eyebrow">Monthly goals</div>
         <h3>Stay within the limits you set</h3>
-        <p>Pick a monthly budget and the things you're saving for. Paisa works out how much to put aside each month and how many months are left.</p>
-        <ul><li>Goals ranked by priority, each with a deadline</li><li>A monthly saving figure for every goal</li><li>Clear signal when the month is running over</li></ul>
+        <p>Each goal shows where its money is kept and what to do next.</p>
+        <ul><li>The monthly and weekly amount to hit the date</li><li>Your real pace, and how late it puts you</li><li>A warning when a near goal is in stocks</li></ul>
       </div>
     </div>
 
     <div class="feature">
-      <img class="shot" src="img/worth.png" alt="Worth tab" loading="lazy">
+      <div class="duo"><img class="shot" src="img/screens/worth.png" alt="Worth: goals bar and roadmap" loading="lazy"><img class="shot" src="img/screens/retirement.jpg" alt="Retirement and private shares" loading="lazy"></div>
       <div>
         <div class="eyebrow">Future roadmap</div>
         <h3>See where your money is heading</h3>
-        <p>What you have set against what your goals need, plus money that's already coming to you: insurance policies, EPF and NPS, each counted at its most conservative value.</p>
-        <ul><li>Have and short, goal by goal</li><li>A cautious, realistic roadmap</li><li>Savings you haven't made aren't counted</li></ul>
+        <p>What you have today, plus money already promised to you. Future savings aren't assumed.</p>
+        <ul><li>Policies counted at their lowest band</li><li>EPF and NPS join the year they open up</li><li>Money past a goal shown as cushion</li><li>Unlisted shares left out until they can be sold</li></ul>
       </div>
     </div>
 
     <div class="feature flip">
-      <img class="shot" src="img/trends.png" alt="Trends tab" loading="lazy">
+      <img class="shot" src="img/screens/categories.png" alt="Where it went: spending by category" loading="lazy">
       <div>
         <div class="eyebrow">Trends</div>
         <h3>Notice changes before they cost you</h3>
-        <p>Month-on-month and category-by-category changes, so a creeping habit shows up early. Unfinished months are marked and left out of the averages.</p>
-        <ul><li>Averages over full months only</li><li>Category change vs last month</li></ul>
+        <p>Every category's share of the month, biggest first.</p>
+        <ul><li>Food totalled across eating out and groceries</li><li>The part rewards paid for, in green</li></ul>
       </div>
     </div>
   </section>
@@ -194,12 +207,27 @@ footer{border-top:1px solid var(--rule);padding:32px 0 56px;color:var(--ink-3);f
     <div class="trust">
       <div class="card"><h3>Exact to the paisa</h3><p>Every amount is stored as whole paise, so ₹470.82 stays ₹470.82 and monthly totals never drift.</p></div>
       <div class="card"><h3>Spending means spending</h3><p>Loans, repayments and transfers are tracked but never counted as living costs. One real month looked 66% higher before this rule.</p></div>
-      <div class="card"><h3>Private by design</h3><p>Self-hosted, for one person, with read-only Gmail access behind your own Google sign-in. Your data stays with you.</p></div>
+      <div class="card"><h3>Cautious by default</h3><p>Policies are counted at their lowest band, locked money stays out of "have", and savings you haven't made yet are never assumed.</p></div>
     </div>
-    <div class="stack"><span>Flask</span><span>SQLite / Postgres</span><span>Gmail API</span><span>PDF statements</span><span>PWA</span></div>
   </section>
 
-  <footer>Paisa · built by Priyadharshan Saba</footer>
+  <section>
+    <div class="eyebrow">Privacy</div>
+    <h2>Your data doesn't go anywhere</h2>
+    <p class="lede">Every number above comes from rules built into the app.</p>
+    <div class="private">
+      <div class="card"><h3>Nothing is shared</h3><p>Your data stays secure in our databases.</p></div>
+      <div class="card"><h3>Rules, not AI</h3><p>Categories, forecasts and suggestions come from fixed rules in the code.</p></div>
+      <div class="card"><h3>No third parties</h3><p>No outside services, and no AI platforms like Claude or OpenAI.</p></div>
+      <div class="card"><h3>Email, read-only</h3><p>The one connection: a one-way, read-only link to your inbox. It can't send, delete or change anything.</p></div>
+    </div>
+    <div class="flow">
+      <span>Your inbox</span><em>→ read-only →</em><span>Paisa</span><em>→</em><span class="no">third parties</span><span class="no">AI platforms</span>
+    </div>
+    <div class="stack"><span>Flask</span><span>SQLite / Postgres</span><span>Gmail API · read-only</span><span>PDF statements</span><span>PWA</span></div>
+  </section>
+
+  <footer>Paisa · built by <a href="https://priyadharshansaba.github.io/">Priyadharshan Saba</a></footer>
 </div>
 </body>
 </html>
